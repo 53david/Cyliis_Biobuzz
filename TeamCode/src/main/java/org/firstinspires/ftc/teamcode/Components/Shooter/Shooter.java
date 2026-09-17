@@ -51,6 +51,8 @@ public class Shooter {
         flyWheel.update();
     }
     public void setState(State state){
-        this.state=state;
+        this.state = state;
     }
-}
+    public State getState(){
+        return state;
+    }}
