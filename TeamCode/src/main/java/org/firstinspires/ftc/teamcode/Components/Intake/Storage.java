@@ -1,57 +1,53 @@
 package org.firstinspires.ftc.teamcode.Components.Intake;
 
-import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 
-@Config
 public class Storage {
-    CRServo motor;
-    public static double intakePower = 0.8, reversePower = 0.45, shootPower = 1, idlePower = 0.08;
+    DigitalChannel sensor1,sensor2,sensor3,sensor4;
+    boolean slot1,slot2,slot3,slot4;
     public enum State{
-        ACTIVE(intakePower),
-        REVERSE(reversePower),
-        IDLE(idlePower),
-        SHOOT(shootPower);
-        double power;
-        State(double power){
-            this.power = power;
-        }
-        State (){
-            this.power = 0;
-        }
-    }
-    public State state;
-    public Storage(){
-        state = State.IDLE;
-        this.motor = Hardware.sch1;
+        READY_FOR_TRANSFER,
+        NO_POLLEN,
+        WAITING_FOR_POLLEN,
+    };
+    State state;
+    public Storage (){
+        state = State.NO_POLLEN;
+        sensor1 = Hardware.bb1;
+        sensor2 = Hardware.bb2;
+        sensor3 = Hardware.bb3;
+        sensor4 = Hardware.bb4;
+
     }
     public void update(){
-        stateUpdate();
-        updatePower();
-        updateHardware();
-    }
-    private void stateUpdate(){
-        switch (state){
-            case IDLE:
-            case SHOOT:
-            case ACTIVE:
-            case REVERSE:
-                break;
-        }
-    }
-    private void updatePower(){
-        State.ACTIVE.power = intakePower;
-        State.REVERSE.power = reversePower;
-        State.IDLE.power = idlePower;
-        State.SHOOT.power = shootPower;
-    }
-    private void updateHardware(){
-        motor.setPower(state.power);
+        slot1 = getStateSensor1();
+        slot2 = getStateSensor2();
+        slot3 = getStateSensor3();
+        slot4 = getStateSensor4();
+
+        if (slot1 && slot2 && slot3 && slot4) {setState(State.READY_FOR_TRANSFER);}
+        else if (slot1 || slot2 || slot3 || slot4) {setState(State.WAITING_FOR_POLLEN);}
+        else setState(State.NO_POLLEN);
     }
     public void setState(State state){
         this.state = state;
+    }
+    public boolean getStateSensor1(){
+        return !sensor1.getState();
+    }
+    public boolean getStateSensor2(){
+        return !sensor2.getState();
+    }
+    public boolean getStateSensor3(){
+        return !sensor3.getState();
+    }
+    public boolean getStateSensor4(){
+        return !sensor4.getState();
+    }
+    public State getState(){
+        return state;
     }
 }

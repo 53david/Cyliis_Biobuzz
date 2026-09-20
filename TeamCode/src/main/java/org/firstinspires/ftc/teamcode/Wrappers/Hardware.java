@@ -20,7 +20,7 @@ public class Hardware {
     public static ServoImplEx ssh0, ssh1, ssh2, ssh3, ssh4, ssh5;
     public static CRServo sch0, sch1, sch2, sch3;
     public static GoBildaPinpointDriver pp;
-
+    public static DigitalChannel bb1,bb2,bb3,bb4;
 
     public static void unlock(DcMotorEx motor)
     {
@@ -61,6 +61,12 @@ public class Hardware {
         sch1=hardwareMap.get(CRServo.class, "sch1");
         sch2=hardwareMap.get(CRServo.class, "sch2");
         sch3=hardwareMap.get(CRServo.class, "sch3");
+
+
+        bb1=hardwareMap.get(DigitalChannel.class,"bb1");
+        bb2=hardwareMap.get(DigitalChannel.class,"bb2");
+        bb3=hardwareMap.get(DigitalChannel.class,"bb3");
+        bb4=hardwareMap.get(DigitalChannel.class,"bb4");
 
 
         pp = hardwareMap.get(GoBildaPinpointDriver.class,"odo");

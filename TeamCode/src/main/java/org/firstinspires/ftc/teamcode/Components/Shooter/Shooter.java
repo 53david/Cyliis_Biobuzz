@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.Components.Shooter;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Components.Intake.Intake;
-import org.firstinspires.ftc.teamcode.Components.Intake.Storage;
-
 public class Shooter {
     public Flywheel flyWheel;
     ElapsedTime timer;
@@ -15,7 +12,7 @@ public class Shooter {
         SHOOT,
         ACTIVE,
     }
-    public State state = State.ACTIVE;
+    public State state;
     public Shooter(State state){
         timer = new ElapsedTime();
         timer.startTime();
@@ -39,7 +36,7 @@ public class Shooter {
             case SHOOT:
                 flyWheel.setState(Flywheel.State.SHOOT);
                 hood.setState(Hood.State.SHOOT);
-                if (timer.seconds()>0.4) state = State.ACTIVE;
+                if (timer.seconds()>0.5) state = State.ACTIVE;
                 break;
         }
 

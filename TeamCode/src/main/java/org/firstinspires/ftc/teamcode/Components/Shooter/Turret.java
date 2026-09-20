@@ -42,8 +42,6 @@ public class Turret {
     }
     public State state = State.BLUE;
     public Turret() {
-        offsetX = 0;
-        offsetY = 0;
         servo1 = Hardware.ssh1;
         servo2 = Hardware.ssh2;
         servo1.setPwmRange(new PwmControl.PwmRange(500, 2500));
@@ -63,8 +61,8 @@ public class Turret {
 
     private void updateServosPosition() {
         if (pause){
-            servo1.setPosition(0.5 + x);
-            servo2.setPosition(0.5 + x);
+            servo1.setPosition(0.5);
+            servo2.setPosition(0.5);
             return;
         }
         double rAngle = targetAngle + offset;
@@ -94,11 +92,7 @@ public class Turret {
                 pause = true;
                 break;
             case BLUE:
-                x = -0.02;
-                pause = false;
-                break;
             case RED:
-                x = 0.01;
                 pause = false;
                 break;
         }

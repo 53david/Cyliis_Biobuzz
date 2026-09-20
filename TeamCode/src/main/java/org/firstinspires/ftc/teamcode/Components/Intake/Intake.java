@@ -5,12 +5,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Intake {
     ElapsedTime timer;
     public ActiveIntake activeIntake;
-    public Storage storage;
     public Transfer transfer;
+    public Pitch pitch;
+    public Storage storage;
+    public FlowerRamp flowerRamp;
     public enum State{
         IDLE,
         REVERSE,
-        ACTIVE,
+        INTAKE,
+        INTAKE_FROM_FLOWER,
+        REVERSE_FROM_FLOWER,
         SHOOT(IDLE);
         State nextState;
         State(State nextState){
@@ -25,14 +29,17 @@ public class Intake {
         timer = new ElapsedTime();
         state = State.IDLE;
         activeIntake = new ActiveIntake();
-        storage = new Storage();
         transfer = new Transfer();
+        pitch = new Pitch();
+        storage = new Storage();
     }
     public void update(){
         stateUpdate();
         activeIntake.update();
-        storage.update();
         transfer.update();
+        pitch.update();
+        storage.update();
+        flowerRamp.updateHardware();
 
         if (state != State.SHOOT) timer.reset();
     }
@@ -40,24 +47,40 @@ public class Intake {
         switch (state){
             case IDLE:
                 activeIntake.setState(ActiveIntake.State.IDLE);
-                storage.setState(Storage.State.IDLE);
                 transfer.setState(Transfer.State.IDLE);
+                pitch.setState(Pitch.State.IDLE);
+                flowerRamp.setState(FlowerRamp.State.GOING_UP);
                 break;
-            case ACTIVE:
-                activeIntake.setState(ActiveIntake.State.ACTIVE);
-                storage.setState(Storage.State.ACTIVE);
-                transfer.setState(Transfer.State.IDLE);
+            case INTAKE:
+                activeIntake.setState(ActiveIntake.State.INTAKE);
+                transfer.setState(Transfer.State.ACTIVE);
+                pitch.setState(Pitch.State.IDLE);
+                flowerRamp.setState(FlowerRamp.State.GOING_UP);
+                break;
+            case INTAKE_FROM_FLOWER:
+                activeIntake.setState(ActiveIntake.State.INTAKE);
+                transfer.setState(Transfer.State.ACTIVE);
+                pitch.setState(Pitch.State.IDLE);
+                flowerRamp.setState(FlowerRamp.State.GOING_DOWN);
+                break;
+            case REVERSE_FROM_FLOWER:
+                activeIntake.setState(ActiveIntake.State.REVERSE);
+                transfer.setState(Transfer.State.ACTIVE);
+                pitch.setState(Pitch.State.IDLE);
+                flowerRamp.setState(FlowerRamp.State.GOING_DOWN);
                 break;
             case REVERSE:
                 activeIntake.setState(ActiveIntake.State.REVERSE);
-                storage.setState(Storage.State.IDLE);
                 transfer.setState(Transfer.State.IDLE);
+                pitch.setState(Pitch.State.IDLE);
+                flowerRamp.setState(FlowerRamp.State.GOING_UP);
                 break;
             case SHOOT:
-                if (timer.seconds()>0.5) state = state.nextState;
+                if (timer.seconds()>0.5 || storage.getState() == Storage.State.NO_POLLEN) state = state.nextState;
                 activeIntake.setState(ActiveIntake.State.SHOOT);
-                storage.setState(Storage.State.SHOOT);
                 transfer.setState(Transfer.State.SHOOT);
+                pitch.setState(Pitch.State.SHOOT);
+                flowerRamp.setState(FlowerRamp.State.GOING_UP);
                 break;
         }
     }

@@ -11,7 +11,7 @@ public class ActiveIntake {
     CRServo motor;
     public static double intakePower = 0.8, reversePower = 0.45, shootPower = 1, idlePower = 0.08;
     public enum State{
-        ACTIVE(intakePower),
+        INTAKE(intakePower),
         REVERSE(reversePower),
         IDLE(idlePower),
         SHOOT(shootPower);
@@ -37,13 +37,13 @@ public class ActiveIntake {
         switch (state){
             case IDLE:
             case SHOOT:
-            case ACTIVE:
+            case INTAKE:
             case REVERSE:
                 break;
         }
     }
     private void updatePower(){
-        State.ACTIVE.power = intakePower;
+        State.INTAKE.power = intakePower;
         State.REVERSE.power = reversePower;
         State.IDLE.power = idlePower;
         State.SHOOT.power = shootPower;

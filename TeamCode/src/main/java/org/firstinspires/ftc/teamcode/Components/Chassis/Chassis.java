@@ -31,7 +31,7 @@ public class Chassis{
     public static double lateralMultiplier=1.5;
     public static  double realHeading;
 
-    public static double kp=0.0066 , kd=0;
+    public static double kp=0.0065 , kd=0;
     public static double KP=1.25 , KD=0.15;
     public PIDController controllerX=new PIDController(kp, 0, kd);
     public PIDController controllerY=new PIDController(kp, 0, kd);
@@ -51,6 +51,20 @@ public class Chassis{
         frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+    }
+    public void setMode(State state)
+    {
+        Chassis.state =state;
+    }
+    public void turnOff(){
+        stop = true;
+    }
+    public void turnOn(){
+        stop = false;
+    }
+    public void setLowPowerMode(boolean ok){
+        if (ok)kp = 0.001;
+        else kp=0.0065;
     }
 
     public boolean inPosition(double ErrorX , double ErrorY , double ErrorRx)
@@ -92,17 +106,6 @@ public class Chassis{
         frontRight.setPower(frontRightPower);
         backRight.setPower(backRightPower);
 
-    }
-
-    public void setMode(State state)
-    {
-        Chassis.state =state;
-    }
-    public static void turnOff(){
-        stop = true;
-    }
-    public static void turnOn(){
-        stop = false;
     }
     public void setTargetPosition(double x , double y , double heading)
     {

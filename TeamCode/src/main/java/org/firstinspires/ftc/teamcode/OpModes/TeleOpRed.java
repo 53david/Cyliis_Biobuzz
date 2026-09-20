@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Components.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Shooter;
+import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
 @TeleOp
@@ -20,6 +21,7 @@ public class TeleOpRed extends LinearOpMode {
     Shooter shooter;
     @Override
     public void runOpMode(){
+        Hardware.init(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         chassis = new Chassis(Chassis.State.DRIVE);
         odo = new Odo();
@@ -41,7 +43,8 @@ public class TeleOpRed extends LinearOpMode {
             chassis.setTargetVector(x, y, rx);
 
             if (gamepad1.left_bumper && intake.getState()!= Intake.State.SHOOT) intake.setState(Intake.State.REVERSE);
-            else if (gamepad1.right_bumper && intake.getState()!= Intake.State.SHOOT) intake.setState(Intake.State.ACTIVE);
+            else if (gamepad1.right_bumper && intake.getState()!= Intake.State.SHOOT) intake.setState(Intake.State.INTAKE);
+            else if (gamepad1.bWasPressed() && intake.getState()!= Intake.State.SHOOT) intake.setState(Intake.State.INTAKE_FROM_FLOWER);
             else if (gamepad1.aWasPressed() && intake.getState()!= Intake.State.SHOOT){ intake.setState(Intake.State.SHOOT); shooter.setState(Shooter.State.SHOOT);}
             else if (intake.getState()!= Intake.State.SHOOT) intake.setState(Intake.State.IDLE);
 

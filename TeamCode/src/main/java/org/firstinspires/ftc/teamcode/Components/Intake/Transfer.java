@@ -1,48 +1,54 @@
 package org.firstinspires.ftc.teamcode.Components.Intake;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 
 @Config
 public class Transfer {
-    Servo servo;
-    public static double idlePos = 0, transferPos = 0;
+    CRServo motor;
+    public static double intakePower = 0.8, reversePower = 0.45, shootPower = 1, idlePower = 0.08;
     public enum State{
-        IDLE(idlePos),
-        SHOOT(transferPos);
-        double position;
-        State(double position){
-            this.position = position;
+        ACTIVE(intakePower),
+        REVERSE(reversePower),
+        IDLE(idlePower),
+        SHOOT(shootPower);
+        double power;
+        State(double power){
+            this.power = power;
         }
-        State(){
-
+        State (){
+            this.power = 0;
         }
     }
     public State state;
     public Transfer(){
         state = State.IDLE;
-        servo = Hardware.ssh0;
+        this.motor = Hardware.sch1;
     }
     public void update(){
-        updateState();
-        updatePositions();
+        stateUpdate();
+        updatePower();
         updateHardware();
     }
-    public void updateState(){
+    private void stateUpdate(){
         switch (state){
             case IDLE:
             case SHOOT:
+            case ACTIVE:
+            case REVERSE:
                 break;
         }
     }
-    public void updatePositions(){
-        State.IDLE.position = idlePos;
-        State.SHOOT.position = transferPos;
+    private void updatePower(){
+        State.ACTIVE.power = intakePower;
+        State.REVERSE.power = reversePower;
+        State.IDLE.power = idlePower;
+        State.SHOOT.power = shootPower;
     }
-    public void updateHardware(){
-        servo.setPosition(state.position);
+    private void updateHardware(){
+        motor.setPower(state.power);
     }
     public void setState(State state){
         this.state = state;
