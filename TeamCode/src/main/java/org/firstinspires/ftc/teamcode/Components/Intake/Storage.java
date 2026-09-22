@@ -35,17 +35,15 @@ public class Storage {
     public void setState(State state){
         this.state = state;
     }
-    public boolean getStateSensor1(){
-        return !sensor1.getState();
-    }
+    public boolean getStateSensor1(){return slot1;}
     public boolean getStateSensor2(){
-        return !sensor2.getState();
+        return slot2;
     }
     public boolean getStateSensor3(){
-        return !sensor3.getState();
+        return slot4;
     }
     public boolean getStateSensor4(){
-        return !sensor4.getState();
+        return slot4;
     }
     public State getState(){
         return state;
