@@ -8,7 +8,8 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class Transfer {
     CRServo motor;
-    public static double intakePower = 0.8, reversePower = 0.45, shootPower = 1, idlePower = 0.08;
+    public static double intakePower = 0.8, reversePower = 0.45, shootPower = 1, idlePower = 0;
+    public static double Ks = 0;
     public enum State{
         ACTIVE(intakePower),
         REVERSE(reversePower),
@@ -48,7 +49,7 @@ public class Transfer {
         State.SHOOT.power = shootPower;
     }
     private void updateHardware(){
-        motor.setPower(state.power);
+        motor.setPower(state.power + Ks);
     }
     public void setState(State state){
         this.state = state;

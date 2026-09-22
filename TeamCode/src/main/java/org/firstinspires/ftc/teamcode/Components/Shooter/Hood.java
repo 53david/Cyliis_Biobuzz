@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.Components.Shooter;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
@@ -40,9 +41,9 @@ public class Hood {
             case PAUSE:
                 break;
             case IDLE:
-                idlePos = 0;
+                idlePos = calculateHoodPos(Odo.distance);
             case SHOOT:
-                shootPos = 0;
+                shootPos = Range.clip(calculateHoodPos(Odo.distance) + k * (Flywheel.targetVelocity-Flywheel.currentVelocity),0,0.5);
                 break;
         }
     }

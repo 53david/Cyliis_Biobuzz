@@ -7,13 +7,15 @@ import org.firstinspires.ftc.teamcode.Math.BetterMotionProfile;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class FlowerRamp {
-    public static double intakePos= 0.5, idlePos = 0.2,acc =20,dec = 20,maxVel = 20;
+    public static double intakePos= 0.5, cameraPos = 0, idlePos = 0.2, acc =20,dec = 20,maxVel = 20;
     BetterMotionProfile profile;
     Servo servo;
 
     public enum State{
         UP(idlePos),
         DOWN(intakePos),
+        CAMERA_POS(cameraPos),
+        GOING_CAMERA_POS(cameraPos,CAMERA_POS),
         GOING_UP(idlePos,UP),
         GOING_DOWN(intakePos,DOWN);
         State nextState;

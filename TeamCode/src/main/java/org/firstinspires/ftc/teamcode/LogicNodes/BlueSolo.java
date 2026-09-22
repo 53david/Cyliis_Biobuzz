@@ -70,7 +70,7 @@ public class BlueSolo {
                 () -> {
                     return intake.getState() == Intake.State.IDLE;
                 },
-                new Node[]{goingGarden,goingLoadingZone,goingFlower2,goingFlower1}
+                new Node[]{goingGarden,goingFlower2,goingFlower1}
         );
         goingGarden.addConditions(
                 ()->{

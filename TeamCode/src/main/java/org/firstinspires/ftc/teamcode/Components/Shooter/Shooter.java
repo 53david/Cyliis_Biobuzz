@@ -11,6 +11,7 @@ public class Shooter {
         IDLE,
         SHOOT,
         ACTIVE,
+        CONTINUOUS_SHOOT,
     }
     public State state;
     public Shooter(State state){
@@ -37,6 +38,10 @@ public class Shooter {
                 flyWheel.setState(Flywheel.State.SHOOT);
                 hood.setState(Hood.State.SHOOT);
                 if (timer.seconds()>0.5) state = State.ACTIVE;
+                break;
+            case CONTINUOUS_SHOOT:
+                flyWheel.setState(Flywheel.State.SHOOT);
+                hood.setState(Hood.State.SHOOT);
                 break;
         }
 

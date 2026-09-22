@@ -15,6 +15,7 @@ public class Intake {
         INTAKE,
         INTAKE_FROM_FLOWER,
         REVERSE_FROM_FLOWER,
+        CONTINUOUS_SHOOT,
         SHOOT(IDLE);
         State nextState;
         State(State nextState){
@@ -77,10 +78,18 @@ public class Intake {
                 break;
             case SHOOT:
                 if (timer.seconds()>0.5 || storage.getState() == Storage.State.NO_POLLEN) state = state.nextState;
-                activeIntake.setState(ActiveIntake.State.SHOOT);
+                if (pitch.getState() != Pitch.State.GOING_SHOOT && pitch.getState()!= Pitch.State.SHOOT) pitch.setState(Pitch.State.GOING_SHOOT);
+                if (pitch.getState() == Pitch.State.SHOOT) activeIntake.setState(ActiveIntake.State.SHOOT);
+                if (flowerRamp.getState() != FlowerRamp.State.GOING_UP && flowerRamp.getState() != FlowerRamp.State.UP)flowerRamp.setState(FlowerRamp.State.GOING_UP);
                 transfer.setState(Transfer.State.SHOOT);
                 pitch.setState(Pitch.State.SHOOT);
-                flowerRamp.setState(FlowerRamp.State.GOING_UP);
+                break;
+            case CONTINUOUS_SHOOT:
+                if (pitch.getState() != Pitch.State.GOING_SHOOT && pitch.getState()!= Pitch.State.SHOOT) pitch.setState(Pitch.State.GOING_SHOOT);
+                if (pitch.getState() == Pitch.State.SHOOT) activeIntake.setState(ActiveIntake.State.SHOOT);
+                if (flowerRamp.getState() != FlowerRamp.State.GOING_UP && flowerRamp.getState() != FlowerRamp.State.UP)flowerRamp.setState(FlowerRamp.State.GOING_UP);
+                transfer.setState(Transfer.State.SHOOT);
+                pitch.setState(Pitch.State.SHOOT);
                 break;
         }
     }

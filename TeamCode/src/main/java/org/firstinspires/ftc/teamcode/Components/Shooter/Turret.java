@@ -17,7 +17,8 @@ public class Turret {
     ServoImplEx servo1,servo2;
     double x = 0;
     public static double redX = 0,redY = -840;
-    public static double blueX = 0,blueY = 840;
+    public static double blueX = -1330,blueY = 435;
+    public static double offsetUp = 0, offsetDown = -600;
     public double targetAngle = 0;
     public static double a = 0.375;
     public double targetPosition = 0.5;
@@ -27,6 +28,14 @@ public class Turret {
     public static double offsetX = 0,offsetY = 0;
     public static double dx = 0, tx =17.793;
     public static double dy = 0, ty = 0;
+    public enum HiveState{
+        UP(offsetUp),
+        DOWN(offsetDown);
+        double offset;
+        HiveState(double offset){
+            this.offset = offset;
+        }
+    }
     public enum State{
         RED(redX,redY),
         BLUE(blueX,blueY),
@@ -41,6 +50,7 @@ public class Turret {
         }
     }
     public State state = State.BLUE;
+    public HiveState hiveState = HiveState.UP;
     public Turret() {
         servo1 = Hardware.ssh1;
         servo2 = Hardware.ssh2;
@@ -81,7 +91,7 @@ public class Turret {
 
     private void updateAngle() {
 
-        dx = (state.x + offsetX) - (pp.getPosX(DistanceUnit.MM)+Odo.offsetX + pp.getVelX(DistanceUnit.MM) * a + tx*Math.cos(Odo.getHeading()));
+        dx = (state.x + offsetX + hiveState.offset) - (pp.getPosX(DistanceUnit.MM)+Odo.offsetX + pp.getVelX(DistanceUnit.MM) * a + tx*Math.cos(Odo.getHeading()));
         dy = (state.y + offsetY) - (pp.getPosY(DistanceUnit.MM)+Odo.offsetY + pp.getVelY(DistanceUnit.MM) * a +tx*Math.sin(Odo.getHeading()));
         targetAngle = Math.atan2(dy, dx);
 
@@ -96,10 +106,16 @@ public class Turret {
                 pause = false;
                 break;
         }
+        if (Odo.downHiveDistance>Odo.upHiveDistance) hiveState=HiveState.UP;
+        else hiveState = HiveState.DOWN;
     }
     public void updateTargetPos(){
         State.RED.x = redX; State.RED.y = redY;
         State.BLUE.x = blueX; State.BLUE.y = blueY;
+        HiveState.UP.offset = offsetUp;
+        HiveState.DOWN.offset = offsetDown;
+        Odo.targetX = state.x;
+        Odo.targetY = state.y;
     }
     private double normalizeRadians(double angle) {
         angle %= (2.0 * Math.PI);

@@ -10,6 +10,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
 import org.firstinspires.ftc.teamcode.Math.LowPassFilter;
 
 import java.lang.Math;
@@ -23,7 +24,7 @@ public class Odo {
         pp.setOffsets(128.5 , -76.999+17.798, DistanceUnit.MM);
 
     }
-
+    public static double upHiveDistance = 0,downHiveDistance = 0,distance, targetX = 0, targetY =0;
     public static double getHeading() {
         return heading;
     }
@@ -71,7 +72,12 @@ public class Odo {
         xGlide = forwardGlide * Math.cos(heading) - lateralGlide * Math.sin(heading);
         yGlide = forwardGlide * Math.sin(heading) + lateralGlide * Math.cos(heading);
     }
-
+    private void updateHiveDistance(){
+        upHiveDistance = Math.sqrt((targetX - x)*(targetX - x)+(targetY - y)*(targetY - y));
+        downHiveDistance = Math.sqrt((targetX - x)*(targetX - x)+((targetY-600) - y)*((targetY-600) - y));
+        if (upHiveDistance>downHiveDistance) distance = downHiveDistance;
+        else distance = downHiveDistance;
+    }
     public static void setPosition(org.firstinspires.ftc.teamcode.Robot.Pose2D pose2D){
         pp.setPosX(pose2D.x,MM);
         pp.setPosY(pose2D.y,MM);
@@ -94,5 +100,6 @@ public class Odo {
         predictedY = y + yGlide;
         prevX = x;
         prevY = y;
+        updateHiveDistance();
     }
 }

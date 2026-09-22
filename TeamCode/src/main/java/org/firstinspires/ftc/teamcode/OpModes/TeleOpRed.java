@@ -42,12 +42,20 @@ public class TeleOpRed extends LinearOpMode {
             double y = X * Math.sin(heading) + Y * Math.cos(heading);
             chassis.setTargetVector(x, y, rx);
 
-            if (gamepad1.left_bumper && intake.getState()!= Intake.State.SHOOT) intake.setState(Intake.State.REVERSE);
-            else if (gamepad1.right_bumper && intake.getState()!= Intake.State.SHOOT) intake.setState(Intake.State.INTAKE);
-            else if (gamepad1.bWasPressed() && intake.getState()!= Intake.State.SHOOT) intake.setState(Intake.State.INTAKE_FROM_FLOWER);
-            else if (gamepad1.aWasPressed() && intake.getState()!= Intake.State.SHOOT){ intake.setState(Intake.State.SHOOT); shooter.setState(Shooter.State.SHOOT);}
-            else if (intake.getState()!= Intake.State.SHOOT) intake.setState(Intake.State.IDLE);
-
+            if (gamepad1.x) {intake.setState(Intake.State.CONTINUOUS_SHOOT); shooter.setState(Shooter.State.CONTINUOUS_SHOOT);}
+            else {
+                if (gamepad1.left_bumper && intake.getState() != Intake.State.SHOOT)
+                    intake.setState(Intake.State.REVERSE);
+                else if (gamepad1.right_bumper && intake.getState() != Intake.State.SHOOT)
+                    intake.setState(Intake.State.INTAKE);
+                else if (gamepad1.bWasPressed() && intake.getState() != Intake.State.SHOOT)
+                    intake.setState(Intake.State.INTAKE_FROM_FLOWER);
+                else if (gamepad1.aWasPressed() && intake.getState() != Intake.State.SHOOT) {
+                    intake.setState(Intake.State.SHOOT);
+                    shooter.setState(Shooter.State.SHOOT);
+                } else if (intake.getState() != Intake.State.SHOOT)
+                    intake.setState(Intake.State.IDLE);
+            }
             telemetry.addData("X",Odo.getX());
             telemetry.addData("Y",Odo.getY());
             telemetry.addData("H",Odo.getHeading());

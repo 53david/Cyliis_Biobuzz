@@ -57,7 +57,7 @@ public class Flywheel {
             case IDLE:
                 break;
             case SHOOT:
-                shootPower = 1;
+                shootPower = calculatePower(Odo.distance);
                 break;
         }
     }
