@@ -43,6 +43,7 @@ public class FlowerRamp {
         switch (state){
             case GOING_UP:
             case GOING_DOWN:
+            case GOING_CAMERA_POS:
                 if (profile.getPosition() == state.position) state = state.nextState;
                 break;
         }

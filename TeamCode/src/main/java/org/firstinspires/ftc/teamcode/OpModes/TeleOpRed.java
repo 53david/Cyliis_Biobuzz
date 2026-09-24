@@ -9,7 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Components.Intake.Intake;
+import org.firstinspires.ftc.teamcode.Components.Intake.Storage;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Shooter;
+import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
@@ -26,6 +28,7 @@ public class TeleOpRed extends LinearOpMode {
         chassis = new Chassis(Chassis.State.DRIVE);
         odo = new Odo();
         shooter = new Shooter(Shooter.State.ACTIVE);
+        shooter.turret.setState(Turret.State.RED);
         intake = new Intake();
         waitForStart();
         while (opModeIsActive()){
@@ -42,12 +45,15 @@ public class TeleOpRed extends LinearOpMode {
             double y = X * Math.sin(heading) + Y * Math.cos(heading);
             chassis.setTargetVector(x, y, rx);
 
-            if (gamepad1.x) {intake.setState(Intake.State.CONTINUOUS_SHOOT); shooter.setState(Shooter.State.CONTINUOUS_SHOOT);}
+            if (gamepad1.x) {intake.setState(Intake.State.CONTINUOUS_SHOOT); shooter.setState(Shooter.State.CONTINUOUS_SHOOT); chassis.setLowPowerMode(true);}
             else {
+                chassis.setLowPowerMode(false);
                 if (gamepad1.left_bumper && intake.getState() != Intake.State.SHOOT)
                     intake.setState(Intake.State.REVERSE);
-                else if (gamepad1.right_bumper && intake.getState() != Intake.State.SHOOT)
+                else if (gamepad1.right_bumper && intake.getState() != Intake.State.SHOOT && intake.storage.getState() != Storage.State.READY_FOR_TRANSFER)
                     intake.setState(Intake.State.INTAKE);
+                else if (gamepad1.right_bumper && intake.getState() != Intake.State.SHOOT && intake.storage.getState() == Storage.State.READY_FOR_TRANSFER)
+                    intake.setState(Intake.State.REVERSE);
                 else if (gamepad1.bWasPressed() && intake.getState() != Intake.State.SHOOT)
                     intake.setState(Intake.State.INTAKE_FROM_FLOWER);
                 else if (gamepad1.aWasPressed() && intake.getState() != Intake.State.SHOOT) {

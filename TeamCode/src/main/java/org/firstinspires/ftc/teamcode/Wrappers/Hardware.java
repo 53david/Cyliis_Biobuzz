@@ -1,22 +1,18 @@
 package org.firstinspires.ftc.teamcode.Wrappers;
 
-import com.qualcomm.hardware.rev.RevSPARKMini;
-import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 public class Hardware {
     public static Gamepad gm1,gm2,prevgm1,prevgm2;
     public static DcMotorEx mch0, mch1, mch2, mch3;
-
+    public static Limelight3A limelight;
     public static ServoImplEx ssh0, ssh1, ssh2, ssh3, ssh4, ssh5;
     public static CRServo sch0, sch1, sch2, sch3;
     public static GoBildaPinpointDriver pp;

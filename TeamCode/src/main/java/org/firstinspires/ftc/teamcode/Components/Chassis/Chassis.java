@@ -22,7 +22,7 @@ public class Chassis{
     public boolean usePredictiveBreaking = true;
     DcMotorEx frontLeft,frontRight,backLeft,backRight;
     public static boolean stop = false;
-    public  double targetX , targetY ,x=0 ,y=0;
+    public  double targetX , targetY ,x=0 ,y=0,multiplier = 1;
     public static double targetHeading;
     public static double error;
     double rotation,heading;
@@ -32,7 +32,7 @@ public class Chassis{
     public static  double realHeading;
 
     public static double kp=0.0065 , kd=0;
-    public static double KP=1.25 , KD=0.15;
+    public static double KP=1 , KD=0.1;
     public PIDController controllerX=new PIDController(kp, 0, kd);
     public PIDController controllerY=new PIDController(kp, 0, kd);
     public PIDController controllerHeading=new PIDController(KP, 0, KD);
@@ -63,8 +63,8 @@ public class Chassis{
         stop = false;
     }
     public void setLowPowerMode(boolean ok){
-        if (ok)kp = 0.001;
-        else kp=0.0065;
+        if (ok)multiplier = 0.4;
+        else multiplier = 1;
     }
 
     public boolean inPosition(double ErrorX , double ErrorY , double ErrorRx)
@@ -101,10 +101,10 @@ public class Chassis{
         double backLeftPower = (y - x + rx) / denominator;
         double frontRightPower = (y - x - rx) / denominator;
         double backRightPower = (y + x - rx) / denominator;
-        frontLeft.setPower(frontLeftPower);
-        backLeft.setPower(backLeftPower);
-        frontRight.setPower(frontRightPower);
-        backRight.setPower(backRightPower);
+        frontLeft.setPower(frontLeftPower * multiplier);
+        backLeft.setPower(backLeftPower * multiplier);
+        frontRight.setPower(frontRightPower * multiplier);
+        backRight.setPower(backRightPower * multiplier);
 
     }
     public void setTargetPosition(double x , double y , double heading)

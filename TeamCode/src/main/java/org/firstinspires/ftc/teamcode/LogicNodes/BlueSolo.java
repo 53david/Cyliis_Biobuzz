@@ -26,7 +26,6 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
 public class BlueSolo {
-    boolean pula = true;
     ElapsedTime timer, globalTimer;
     Chassis chassis;
     Intake intake;
@@ -62,13 +61,13 @@ public class BlueSolo {
 
         shoot.addConditions(
                 () -> {
-                    chassis.setTargetPosition(shootPos[(shoot.index+1)%2]);
+                    chassis.setTargetPosition(shootPos[(shoot.index+1)/2]);
                     if (intake.storage.getState() == Storage.State.READY_FOR_TRANSFER && intake.getState()!= Intake.State.SHOOT) {intake.setState(Intake.State.REVERSE);}
                     else if (intake.storage.getState() == Storage.State.WAITING_FOR_POLLEN) {intake.setState(Intake.State.IDLE);}
                     if (chassis.inPosition(120, 120, 0.1)) {intake.setState(Intake.State.SHOOT);shooter.setState(Shooter.State.SHOOT);}
                 },
                 () -> {
-                    return intake.getState() == Intake.State.IDLE;
+                    return intake.storage.getState() == Storage.State.NO_POLLEN;
                 },
                 new Node[]{goingGarden,goingFlower2,goingFlower1}
         );
@@ -124,7 +123,7 @@ public class BlueSolo {
                 ()->{
                     return intake.flowerRamp.getState() == FlowerRamp.State.DOWN;
                 },
-                new Node[]{garden}
+                new Node[]{flower1}
                 );
         flower1.addConditions(
                 ()->{
@@ -146,7 +145,7 @@ public class BlueSolo {
                 ()->{
                     return intake.flowerRamp.getState() == FlowerRamp.State.DOWN;
                 },
-                new Node[]{garden}
+                new Node[]{flower2}
         );
         flower2.addConditions(
                 ()->{

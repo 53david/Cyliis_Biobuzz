@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 public class Turret {
     ServoImplEx servo1,servo2;
     double x = 0;
+    public static double minAngleLimit = 0.05, maxAngleLimit = 0.95;
     public static double redX = 0,redY = -840;
     public static double blueX = -1330,blueY = 435;
     public static double offsetUp = 0, offsetDown = -600;
@@ -81,8 +82,8 @@ public class Turret {
         rAngle = rAngle / maxAngle;
 
         targetPosition = rAngle;
-        targetPosition = Math.max(0.05 , targetPosition);
-        targetPosition = Math.min(0.9, targetPosition);
+        targetPosition = Math.max(minAngleLimit, targetPosition);
+        targetPosition = Math.min(maxAngleLimit, targetPosition);
 
         servo1.setPosition(targetPosition);
         servo2.setPosition(targetPosition);
@@ -125,5 +126,11 @@ public class Turret {
     }
     public void setState(State state){
         this.state = state;
+    }
+    public State getState(){
+        return state;
+    }
+    public HiveState getHiveState(){
+        return hiveState;
     }
 }

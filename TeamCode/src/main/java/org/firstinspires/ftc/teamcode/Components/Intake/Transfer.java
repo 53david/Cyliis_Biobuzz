@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class Transfer {
     CRServo motor;
-    public static double intakePower = 0.8, reversePower = 0.45, shootPower = 1, idlePower = 0;
-    public static double Ks = 0;
+    public static double intakePower = 1, reversePower = 0.45, shootPower = 1, idlePower = 0;
+    public static double Ks = 0.01;
     public enum State{
         ACTIVE(intakePower),
         REVERSE(reversePower),
