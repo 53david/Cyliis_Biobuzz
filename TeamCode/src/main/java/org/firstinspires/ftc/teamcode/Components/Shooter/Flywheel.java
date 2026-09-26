@@ -1,17 +1,10 @@
 package org.firstinspires.ftc.teamcode.Components.Shooter;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.PwmControl;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
-
-
-import org.firstinspires.ftc.teamcode.Math.PIDController;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
@@ -24,7 +17,7 @@ public class Flywheel {
     public static double Kv = 0;
     public static double Ka = 0;
     public static double shootPower = 0,idlePower = 1450;
-    public static double currentVelocity = 0,targetVelocity =0;
+    public static double currentVelocity = 0,targetVelocity =0,prevVelocity = 0;
     public enum State{
         IDLE(idlePower),
         SHOOT(shootPower);
@@ -50,6 +43,7 @@ public class Flywheel {
         updateState();
         updatePower();
         updateHardware();
+        prevVelocity = currentVelocity;
 
     }
     private void updateState(){
@@ -66,7 +60,10 @@ public class Flywheel {
         State.IDLE.power = idlePower;
     }
     private void updateHardware(){
-        rpm = Kv * state.power + Ks * Math.signum(state.power- currentVelocity) + (state.power-currentVelocity) * Kp;
+        rpm = Kv * state.power + Ks * Math.signum(state.power- currentVelocity)
+                + (state.power-currentVelocity) * Kp;
+        if (state.power > currentVelocity) rpm += Ka*(prevVelocity-currentVelocity);
+        else rpm += Ka * (currentVelocity-prevVelocity);
 
         shoot1.setPower(rpm);
         shoot2.setPower(rpm);

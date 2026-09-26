@@ -9,11 +9,11 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 public class Transfer {
     CRServo motor;
     public static double intakePower = 1, reversePower = 0.45, shootPower = 1, idlePower = 0;
-    public static double Ks = 0.01;
+    public static double Ks = 0.035;
     public enum State{
         ACTIVE(intakePower),
         REVERSE(reversePower),
-        IDLE(idlePower),
+        IDLE,
         SHOOT(shootPower);
         double power;
         State(double power){

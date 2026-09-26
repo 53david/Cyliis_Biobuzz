@@ -1,17 +1,18 @@
 package org.firstinspires.ftc.teamcode.LogicNodes;
 
-import static org.firstinspires.ftc.teamcode.Trajectories.BlueTrajectory.edgePos;
-import static org.firstinspires.ftc.teamcode.Trajectories.BlueTrajectory.flower1Pos;
-import static org.firstinspires.ftc.teamcode.Trajectories.BlueTrajectory.flower2Pos;
-import static org.firstinspires.ftc.teamcode.Trajectories.BlueTrajectory.gardenPos;
-import static org.firstinspires.ftc.teamcode.Trajectories.BlueTrajectory.goingFlower1Pos;
-import static org.firstinspires.ftc.teamcode.Trajectories.BlueTrajectory.goingFlower2Pos;
-import static org.firstinspires.ftc.teamcode.Trajectories.BlueTrajectory.goingGardenPos;
-import static org.firstinspires.ftc.teamcode.Trajectories.BlueTrajectory.goingLoadingZonePos;
-import static org.firstinspires.ftc.teamcode.Trajectories.BlueTrajectory.loadingZonePos;
-import static org.firstinspires.ftc.teamcode.Trajectories.BlueTrajectory.shootPos;
-import static org.firstinspires.ftc.teamcode.Trajectories.BlueTrajectory.trussPos;
-import static org.firstinspires.ftc.teamcode.Trajectories.BlueTrajectory.underHivePos;
+import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.edgePos;
+import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.flower1Pos;
+import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.flower2Pos;
+import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.gardenPos;
+import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.goingFlower1Pos;
+import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.goingFlower2Pos;
+import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.goingGardenPos;
+import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.goingLoadingZonePos;
+import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.loadingZonePos;
+import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.parkPos;
+import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.shootPos;
+import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.trussPos;
+import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.underHivePos;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -31,7 +32,7 @@ public class BlueSolo {
     Intake intake;
     Shooter shooter;
     Odo odo;
-    Node shoot, goingTruss, goingEdge, goingFlower1, goingFlower2, goingGarden, goingLoadingZone, flower1, flower2, garden, loadingZone, hive;
+    Node shoot, goingTruss, goingEdge, goingFlower1, goingFlower2, goingGarden, goingLoadingZone, flower1, flower2, garden, loadingZone, hive, park;
     public Node currentNode;
 
     public BlueSolo(HardwareMap hardwareMap) {
@@ -57,6 +58,7 @@ public class BlueSolo {
         garden = new Node("garden");
         loadingZone = new Node("loadingZone");
         hive = new Node("hive");
+        park = new Node("park");
         currentNode = shoot;
 
         shoot.addConditions(
@@ -189,6 +191,16 @@ public class BlueSolo {
                 },
                 new Node[]{shoot}
         );
+        park.addConditions(
+                ()->{
+                    chassis.setTargetPosition(parkPos);
+                    intake.setState(Intake.State.IDLE);
+                },
+                ()->{
+                    return chassis.inPosition(30,30,0.1);
+                },
+                new Node[]{park}
+        );
 
     }
     public void update(){
@@ -200,7 +212,7 @@ public class BlueSolo {
 
         if (currentNode != flower1 && currentNode != flower2) chassis.turnOn();
         if (currentNode != garden) chassis.setLowPowerMode(false);
-
+        if (currentNode != shoot && globalTimer.seconds()>29) currentNode = park;
         if (currentNode.transition()){
             currentNode = currentNode.next[Math.min(currentNode.index++, currentNode.next.length-1)];
         }
