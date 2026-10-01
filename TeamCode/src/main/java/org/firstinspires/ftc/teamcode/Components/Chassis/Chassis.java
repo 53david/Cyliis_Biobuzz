@@ -18,7 +18,7 @@ public class Chassis{
     public enum State{
         DRIVE , PID;
     }
-    public static State state;
+    public State state;
     public boolean usePredictiveBreaking = true;
     DcMotorEx frontLeft,frontRight,backLeft,backRight;
     public static boolean stop = false;
@@ -54,7 +54,7 @@ public class Chassis{
     }
     public void setMode(State state)
     {
-        Chassis.state =state;
+        this.state =state;
     }
     public void turnOff(){
         stop = true;

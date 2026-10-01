@@ -72,6 +72,9 @@ public class Odo {
         xGlide = forwardGlide * Math.cos(heading) - lateralGlide * Math.sin(heading);
         yGlide = forwardGlide * Math.sin(heading) + lateralGlide * Math.cos(heading);
     }
+    public static double avgVel(){
+        return Math.hypot(pp.getVelX(MM),pp.getVelY(MM));
+    }
     private void updateHiveDistance(){
         upHiveDistance = Math.sqrt((targetX - x)*(targetX - x)+(targetY - y)*(targetY - y));
         downHiveDistance = Math.sqrt((targetX - x)*(targetX - x)+((targetY-600) - y)*((targetY-600) - y));

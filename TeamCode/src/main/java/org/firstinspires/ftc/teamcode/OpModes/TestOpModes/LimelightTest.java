@@ -1,31 +1,34 @@
 package org.firstinspires.ftc.teamcode.OpModes.TestOpModes;
 
+
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Limelight;
+import org.firstinspires.ftc.teamcode.Wrappers.Odo;
+
 @TeleOp
+@Config
 public class LimelightTest extends LinearOpMode {
-    Limelight limelight;
     public static int index;
-    public void runOpMode() throws InterruptedException{
+    Chassis chassis;
+    Odo odo;
+    Limelight limelight;
+    public void runOpMode(){
         Hardware.init(hardwareMap);
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        limelight = new Limelight(Limelight.State.STOP);
-        limelight.setPipelineIndex(index);
-        while (opModeInInit()){
-            limelight.setState(Limelight.State.ACTIVE);
-        }
+        chassis = new Chassis(Chassis.State.PID);
+        odo = new Odo();
+        telemetry= new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        limelight = new Limelight(Limelight.State.ACTIVE);
+        waitForStart();
         while (opModeIsActive()){
             limelight.update();
-            if (index == 0) {
-                telemetry.addData("X", limelight.getPosX());
-                telemetry.addData("Y", limelight.getPosY());
-                telemetry.addData("Z", limelight.getPosZ());
-            }
+            limelight.setPipeLineIndex(index);
             telemetry.update();
         }
     }
