@@ -24,7 +24,7 @@ public class Turret {
     public static double a = 0;
     public double targetPosition = 0.5;
     public boolean pause = false;
-    public double maxAngle = Math.PI*2 + Math.PI/3;
+    public double maxAngle = Math.PI*2 + Math.PI/6;
     public static double offset = 0;
     public static double offsetX = 0,offsetY = 0;
     public static double dx = 0, tx =0;
