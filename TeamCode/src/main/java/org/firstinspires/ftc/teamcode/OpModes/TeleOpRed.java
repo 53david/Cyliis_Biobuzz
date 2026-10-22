@@ -45,10 +45,6 @@ public class TeleOpRed extends LinearOpMode {
             double x = X * Math.cos(heading) - Y * Math.sin(heading);
             double y = X * Math.sin(heading) + Y * Math.cos(heading);
             chassis.setTargetVector(x, y, rx);
-
-            if (gamepad1.x) {intake.setState(Intake.State.CONTINUOUS_SHOOT); shooter.setState(Shooter.State.CONTINUOUS_SHOOT); chassis.setLowPowerMode(true);}
-            else {
-                chassis.setLowPowerMode(false);
                 if (gamepad1.left_bumper && intake.getState() != Intake.State.SHOOT)
                     intake.setState(Intake.State.REVERSE);
                 else if (gamepad1.right_bumper && intake.getState() != Intake.State.SHOOT && intake.storage.getState() != Storage.State.READY_FOR_TRANSFER)
@@ -62,7 +58,6 @@ public class TeleOpRed extends LinearOpMode {
                     shooter.setState(Shooter.State.SHOOT);
                 } else if (intake.getState() != Intake.State.SHOOT)
                     intake.setState(Intake.State.IDLE);
-            }
             telemetry.addData("X",Odo.getX());
             telemetry.addData("Y",Odo.getY());
             telemetry.addData("H",Odo.getHeading());

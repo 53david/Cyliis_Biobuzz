@@ -21,13 +21,13 @@ public class Turret {
     public static double blueX = -1330,blueY = 435;
     public static double offsetUp = 0, offsetDown = -600;
     public double targetAngle = 0;
-    public static double a = 0.375;
+    public static double a = 0;
     public double targetPosition = 0.5;
     public boolean pause = false;
-    public double maxAngle = Math.PI * 2;
+    public double maxAngle = Math.PI*2 + Math.PI/3;
     public static double offset = 0;
     public static double offsetX = 0,offsetY = 0;
-    public static double dx = 0, tx =17.793;
+    public static double dx = 0, tx =0;
     public static double dy = 0, ty = 0;
     public enum HiveState{
         UP(offsetUp),
@@ -92,8 +92,8 @@ public class Turret {
 
     private void updateAngle() {
 
-        dx = (state.x + offsetX + hiveState.offset) - (pp.getPosX(DistanceUnit.MM)+Odo.offsetX + pp.getVelX(DistanceUnit.MM) * a + tx*Math.cos(Odo.getHeading()));
-        dy = (state.y + offsetY) - (pp.getPosY(DistanceUnit.MM)+Odo.offsetY + pp.getVelY(DistanceUnit.MM) * a +tx*Math.sin(Odo.getHeading()));
+        dx = (state.x + offsetX + hiveState.offset) - (Odo.x +Odo.offsetX + Odo.xVelocity * a + tx * Math.cos(Odo.getHeading()));
+        dy = (state.y + offsetY) - (Odo.y +Odo.offsetY + Odo.yVelocity * a +tx * Math.sin(Odo.getHeading()));
         targetAngle = Math.atan2(dy, dx);
 
     }
