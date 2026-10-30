@@ -16,6 +16,10 @@ public class Limelight {
         UP,
         DOWN,
     }
+    public enum HivePosition{
+        UP,
+        DOWN,
+    };
     public enum State{
         ACTIVE(),
         STOP;
@@ -32,6 +36,7 @@ public class Limelight {
     public int index,pipelineIndex,prevIndex,pollingRate = 100,prevPollingRate;
     public State state;
     public HiveState hiveState = HiveState.DOWN;
+    public HivePosition hivePosition = HivePosition.DOWN;
     Limelight3A limelight;
     public Limelight(State state){
         timer = new ElapsedTime();
@@ -70,19 +75,19 @@ public class Limelight {
             List<LLResultTypes.FiducialResult> list = result.getFiducialResults();
             if (!list.isEmpty()){
                 timer.reset();
-                if (list.get(0).getFiducialId() == 42) {index = 0; timer.reset();}
-                if (list.get(0).getFiducialId() == 41) {index = 1; timer.reset();}
-                if (list.get(0).getFiducialId() == 37) {index = 2; timer.reset();}
-                if (list.get(0).getFiducialId() == 30) {index = 3; timer.reset();}
+                if (list.get(0).getFiducialId() == 42) {hivePosition = HivePosition.DOWN; index = 0; timer.reset();}
+                if (list.get(0).getFiducialId() == 41) {hivePosition = HivePosition.UP; index = 1; timer.reset();}
+                if (list.get(0).getFiducialId() == 37) {hivePosition = HivePosition.DOWN; index = 2; timer.reset();}
+                if (list.get(0).getFiducialId() == 30) {hivePosition = HivePosition.UP; index = 3; timer.reset();}
 
             }
         }
         if (Odo.avgVel()>100) timer.reset();
         if (timer.seconds()>2.5){
-            if (hiveState == HiveState.DOWN && limelight.getStatus().getPipelineIndex() == 5){index = 1; timer.reset();}
-            if (hiveState == HiveState.UP && limelight.getStatus().getPipelineIndex() == 5){index = 0; timer.reset();}
-            if (hiveState == HiveState.DOWN && limelight.getStatus().getPipelineIndex() == 4){index = 3; timer.reset();}
-            if (hiveState == HiveState.UP && limelight.getStatus().getPipelineIndex() == 4){index = 2; timer.reset();}
+            if (hiveState == HiveState.DOWN && limelight.getStatus().getPipelineIndex() == 5){hivePosition = HivePosition.UP; index = 1; timer.reset();}
+            if (hiveState == HiveState.UP && limelight.getStatus().getPipelineIndex() == 5){hivePosition = HivePosition.DOWN; index = 0; timer.reset();}
+            if (hiveState == HiveState.DOWN && limelight.getStatus().getPipelineIndex() == 4){hivePosition = HivePosition.UP; index = 3; timer.reset();}
+            if (hiveState == HiveState.UP && limelight.getStatus().getPipelineIndex() == 4){hivePosition = HivePosition.DOWN; index = 2; timer.reset();}
 
         }
     }
@@ -106,5 +111,8 @@ public class Limelight {
     }
     public double getTime(){
         return timer.seconds();
+    }
+    public HivePosition getHivePosition(){
+        return hivePosition;
     }
 }

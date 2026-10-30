@@ -2,14 +2,16 @@ package org.firstinspires.ftc.teamcode.Components.Intake;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 
 @Config
 public class ActiveIntake {
-    CRServo motor;
-    public static double intakePower = 0.8, reversePower = 0.45, shootPower = 1, idlePower = 0.08;
+    DcMotorEx motor;
+    public static double intakePower = 1, reversePower = -0.45, shootPower = 0.65, idlePower = 0;
     public enum State{
         INTAKE(intakePower),
         REVERSE(reversePower),
@@ -26,7 +28,9 @@ public class ActiveIntake {
     public State state;
     public ActiveIntake(){
         state = State.IDLE;
-        this.motor = Hardware.sch1;
+        this.motor = Hardware.mch0;
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        motor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
     public void update(){
         stateUpdate();

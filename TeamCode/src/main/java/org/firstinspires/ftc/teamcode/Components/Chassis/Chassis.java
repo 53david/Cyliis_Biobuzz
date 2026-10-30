@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.pp;
 
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -20,7 +21,7 @@ public class Chassis{
     }
     public State state;
     public boolean usePredictiveBreaking = true;
-    DcMotorEx frontLeft,frontRight,backLeft,backRight;
+    CRServo frontLeft,frontRight,backLeft,backRight;
     public static boolean stop = false;
     public  double targetX , targetY ,x=0 ,y=0,multiplier = 1;
     public static double targetHeading;
@@ -31,26 +32,22 @@ public class Chassis{
     public static double lateralMultiplier=1.5;
     public static  double realHeading;
 
-    public static double kp=0.0065 , kd=0;
-    public static double KP=1 , KD=0.1;
+    public static double kp=0.0065 , ki=0, kd=0;
+    public static double KP=1 , KI=0, KD=0.1;
     public PIDController controllerX=new PIDController(kp, 0, kd);
     public PIDController controllerY=new PIDController(kp, 0, kd);
     public PIDController controllerHeading=new PIDController(KP, 0, KD);
 
     public Chassis(State initialState)
     {
-        frontLeft= Hardware.mch3;
-        frontRight= Hardware.mch1;
-        backLeft=Hardware.mch2;
-        backRight=Hardware.mch0;
+        frontLeft= Hardware.sch2;
+        frontRight= Hardware.sch0;
+        backLeft=Hardware.sch3;
+        backRight=Hardware.sch1;
 
         state=initialState;
-        backRight.setDirection(DcMotorEx.Direction.REVERSE);
-        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
-        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
     }
     public void setMode(State state)
     {
@@ -61,10 +58,6 @@ public class Chassis{
     }
     public void turnOn(){
         stop = false;
-    }
-    public void setLowPowerMode(boolean ok){
-        if (ok)multiplier = 0.4;
-        else multiplier = 1;
     }
 
     public boolean inPosition(double ErrorX , double ErrorY , double ErrorRx)
@@ -177,6 +170,26 @@ public class Chassis{
         targetHeading=position.heading;
         usingTargetHeading=true;
         this.usePredictiveBreaking = usePredictiveBreaking;
+    }
+    public void setHeadingPIDCoefficients(double Kp, double Ki, double Kd){
+        KP = Kp;
+        KI = Ki;
+        KD = Kd;
+    }
+    public void setPIDCoefficients(double Kp, double Ki, double Kd){
+        kp = Kp;
+        ki = Ki;
+        kd = Kd;
+    }
+    public void setHeadingPIDCoefficients(PIDController pidController){
+        KP = pidController.kp;
+        KI = pidController.ki;
+        KD = pidController.kd;
+    }
+    public void setPIDCoefficients(PIDController pidController){
+        kp = pidController.kp;
+        ki = pidController.ki;
+        kd = pidController.kd;
     }
     public void updatePID(){
         controllerX.kp=kp;

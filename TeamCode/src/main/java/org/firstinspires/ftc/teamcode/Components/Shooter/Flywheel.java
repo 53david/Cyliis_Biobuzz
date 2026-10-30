@@ -5,18 +5,22 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Math.LowPassFilter;
+import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
-import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
 @Config
 public class Flywheel {
-    CRServo shoot1,shoot2;
-    DcMotorEx encoder;
-    public static double Kp = 0;
+    DcMotorEx encoder,shoot1,shoot2;
+    public static double Kp = 0.00055;
     public static double Ks = 0;
-    public static double Kv = 0;
+    public static double Kv = 0.000425;
     public static double Ka = 0;
-    public static double shootPower = 0,idlePower = 1450;
+    public static double filterParameter = 1;
+    LowPassFilter passFilter = new LowPassFilter(filterParameter,0);
+    public static double shootPower = 0,idlePower = 1300;
     public static double currentVelocity = 0,targetVelocity =0,prevVelocity = 0;
     public enum State{
         IDLE(idlePower),
@@ -32,14 +36,15 @@ public class Flywheel {
     public static double rpm = 0;
     public Flywheel(){
         encoder = Hardware.mch3;
-        shoot1 = Hardware.sch2;
-        shoot2 = Hardware.sch3;
+        shoot1 = Hardware.mch2;
+        shoot2 = Hardware.mch3;
         shoot1.setDirection(DcMotorSimple.Direction.REVERSE);
         shoot2.setDirection(DcMotorSimple.Direction.FORWARD);
     }
     public void update(){
         targetVelocity = state.power;
-        currentVelocity = encoder.getVelocity();
+        passFilter.setFilterParameter(filterParameter);
+        currentVelocity = passFilter.getValue(encoder.getVelocity());
         updateState();
         updatePower();
         updateHardware();
@@ -51,7 +56,7 @@ public class Flywheel {
             case IDLE:
                 break;
             case SHOOT:
-                shootPower = calculatePower(Odo.distance);
+                shootPower = ShooterCalculator.getVelocity();
                 break;
         }
     }
@@ -83,9 +88,6 @@ public class Flywheel {
     }
     public State getState(){
         return state;
-    }
-    public double calculatePower(double distance){
-       return 0;
     }
 
 }

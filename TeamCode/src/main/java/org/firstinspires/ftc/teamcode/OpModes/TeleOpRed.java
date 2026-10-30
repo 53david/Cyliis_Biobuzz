@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.gm1;
+import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.gm2;
+import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.prevgm1;
+import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.prevgm2;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -8,8 +11,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
-import org.firstinspires.ftc.teamcode.Components.Intake.FlowerRamp;
+import org.firstinspires.ftc.teamcode.Components.Intake.Ramp;
 import org.firstinspires.ftc.teamcode.Components.Intake.Intake;
+import org.firstinspires.ftc.teamcode.Components.Intake.Pitch;
 import org.firstinspires.ftc.teamcode.Components.Intake.Storage;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Shooter;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
@@ -24,6 +28,7 @@ public class TeleOpRed extends LinearOpMode {
     Shooter shooter;
     @Override
     public void runOpMode(){
+
         Hardware.init(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         chassis = new Chassis(Chassis.State.DRIVE);
@@ -33,10 +38,10 @@ public class TeleOpRed extends LinearOpMode {
         intake = new Intake();
         waitForStart();
         while (opModeIsActive()){
-            chassis.update();
+            gm1.copy(gamepad1);
+            gm2.copy(gamepad2);
+
             odo.update();
-            intake.update();
-            shooter.update();
 
             double heading = -Odo.getHeading() - Math.PI/2;
             double X = gm1.left_stick_x;
@@ -45,23 +50,33 @@ public class TeleOpRed extends LinearOpMode {
             double x = X * Math.cos(heading) - Y * Math.sin(heading);
             double y = X * Math.sin(heading) + Y * Math.cos(heading);
             chassis.setTargetVector(x, y, rx);
-                if (gamepad1.left_bumper && intake.getState() != Intake.State.SHOOT)
-                    intake.setState(Intake.State.REVERSE);
-                else if (gamepad1.right_bumper && intake.getState() != Intake.State.SHOOT && intake.storage.getState() != Storage.State.READY_FOR_TRANSFER)
-                    intake.setState(Intake.State.INTAKE);
-                else if (gamepad1.right_bumper && intake.getState() != Intake.State.SHOOT && intake.storage.getState() == Storage.State.READY_FOR_TRANSFER)
-                    intake.setState(Intake.State.REVERSE);
-                else if (gamepad1.left_trigger>0.25 && intake.getState() != Intake.State.SHOOT && intake.flowerRamp.getState()!= FlowerRamp.State.GOING_DOWN && intake.flowerRamp.getState()!= FlowerRamp.State.DOWN)
-                    intake.flowerRamp.setState(FlowerRamp.State.GOING_DOWN);
-                else if (gamepad1.right_trigger>0.25 && intake.getState() != Intake.State.SHOOT) {
-                    intake.setState(Intake.State.SHOOT);
+            chassis.update();
+
+            if (gamepad1.left_bumper && intake.getState() != Intake.State.SHOOT)
+                intake.setState(Intake.State.REVERSE);
+            else if (gamepad1.right_bumper && intake.getState() != Intake.State.SHOOT && intake.storage.getState() != Storage.State.READY_FOR_TRANSFER)
+                intake.setState(Intake.State.INTAKE);
+            else if (gamepad1.right_bumper && intake.getState() != Intake.State.SHOOT && intake.storage.getState() == Storage.State.READY_FOR_TRANSFER)
+                intake.setState(Intake.State.REVERSE);
+            else if (gamepad1.a) {
+                intake.setState(Intake.State.SHOOT);
+                if (intake.pitch.getState() == Pitch.State.SHOOT)
                     shooter.setState(Shooter.State.SHOOT);
-                } else if (intake.getState() != Intake.State.SHOOT)
-                    intake.setState(Intake.State.IDLE);
+            }
+            else intake.setState(Intake.State.IDLE);
+            if (gamepad1.bWasPressed() && intake.ramp.getState() == Ramp.State.GOING_DOWN || intake.ramp.getState() == Ramp.State.DOWN)intake.retractRamp();
+            if (gamepad1.bWasPressed() && intake.ramp.getState() == Ramp.State.GOING_UP || intake.ramp.getState() == Ramp.State.UP)intake.deployRamp();
+
+            intake.update();
+            shooter.update();
+
+            prevgm1.copy(gm1);
+            prevgm2.copy(gm2);
             telemetry.addData("X",Odo.getX());
             telemetry.addData("Y",Odo.getY());
-            telemetry.addData("H",Odo.getHeading());
-            telemetry.addData("Velocity",shooter.flyWheel.getVelocity());
+            telemetry.addData("Heading",Odo.getHeading());
+            telemetry.addData("Current Velocity",shooter.flyWheel.getVelocity());
+            telemetry.addData("Target Velocity",shooter.flyWheel.getTargetVelocity());
             telemetry.update();
 
         }

@@ -6,16 +6,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Math.BetterMotionProfile;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
-public class FlowerRamp {
-    public static double intakePos= 0.5, cameraPos = 0, idlePos = 0.2, acc =20,dec = 20,maxVel = 20;
+public class Ramp {
+    public static double intakePos= 0.965, idlePos = 0.55, acc =8,dec = 9,maxVel = 10;
     BetterMotionProfile profile;
     Servo servo;
 
     public enum State{
         UP(idlePos),
         DOWN(intakePos),
-        CAMERA_POS(cameraPos),
-        GOING_CAMERA_POS(cameraPos,CAMERA_POS),
         GOING_UP(idlePos,UP),
         GOING_DOWN(intakePos,DOWN);
         State nextState;
@@ -29,10 +27,11 @@ public class FlowerRamp {
             this.nextState = this;
         }
     }
-    State state;
-    public FlowerRamp(){
-        servo = Hardware.ssh5;
+    State state = State.UP;
+    public Ramp(){
+        servo = Hardware.ssh2;
         profile = new BetterMotionProfile(maxVel,acc,dec);
+        profile.setMotion(idlePos , idlePos , 0);
     }
     public void update(){
         updateState();
@@ -43,7 +42,6 @@ public class FlowerRamp {
         switch (state){
             case GOING_UP:
             case GOING_DOWN:
-            case GOING_CAMERA_POS:
                 if (profile.getPosition() == state.position) state = state.nextState;
                 break;
         }

@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.Math;
 
 public class LowPassFilter {
 
-    private final double t;
+    private double t;
     private double lastValue;
 
     public LowPassFilter(double t, double initialValue){
@@ -14,5 +14,8 @@ public class LowPassFilter {
         double newValue = lastValue + t * (rawValue - lastValue);
         this.lastValue = newValue;
         return newValue;
+    }
+    public void setFilterParameter(double parameter){
+        t = parameter;
     }
 }

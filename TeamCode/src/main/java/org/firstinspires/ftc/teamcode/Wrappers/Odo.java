@@ -17,14 +17,14 @@ import java.lang.Math;
 
 @Config
 public class Odo {
-    public static double heading,x ,y, xVelocity, yVelocity, predictedX, predictedY,offsetX = 0,offsetY = 0, offset = 0,prevX = 0, prevY = 0;
+    public static double heading,x ,y, xVelocity, yVelocity, predictedX, predictedY,offsetX = 0,offsetY = 0,prevX = 0, prevY = 0, prevVelX = 0, prevVelY = 0;
     public Odo(){
         pp.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED , org.firstinspires.ftc.teamcode.Wrappers.GoBildaPinpointDriver.EncoderDirection.FORWARD);
         pp.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        pp.setOffsets(128.5 , -76.999+17.798, DistanceUnit.MM);
+        pp.setOffsets(114.113 ,0.12, DistanceUnit.MM);
 
     }
-    public static double upHiveDistance = 0,downHiveDistance = 0,distance, targetX = 0, targetY =0;
+    public static double targetX = 0, targetY =0;
     public static double getHeading() {
         return heading;
     }
@@ -40,10 +40,10 @@ public class Odo {
     public static double getRawY(){
         return pp.getPosY(MM);
     }
-    public static double velX(){
+    public static double getVelX(){
         return xVelocity;
     }
-    public static double velY(){
+    public static double getVelY(){
         return yVelocity;
     }
     public void reset() {
@@ -75,12 +75,7 @@ public class Odo {
     public static double avgVel(){
         return Math.hypot(pp.getVelX(MM),pp.getVelY(MM));
     }
-    private void updateHiveDistance(){
-        upHiveDistance = Math.sqrt((targetX - x)*(targetX - x)+(targetY - y)*(targetY - y));
-        downHiveDistance = Math.sqrt((targetX - x)*(targetX - x)+((targetY-600) - y)*((targetY-600) - y));
-        if (upHiveDistance>downHiveDistance) distance = downHiveDistance;
-        else distance = downHiveDistance;
-    }
+
     public static void setPosition(org.firstinspires.ftc.teamcode.Robot.Pose2D pose2D){
         pp.setPosX(pose2D.x,MM);
         pp.setPosY(pose2D.y,MM);
@@ -103,6 +98,8 @@ public class Odo {
         predictedY = y + yGlide;
         prevX = x;
         prevY = y;
-        updateHiveDistance();
+        prevVelX = xVelocity;
+        prevVelY = yVelocity;
+
     }
 }

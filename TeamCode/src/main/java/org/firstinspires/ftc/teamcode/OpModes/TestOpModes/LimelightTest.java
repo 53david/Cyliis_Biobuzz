@@ -27,6 +27,7 @@ public class LimelightTest extends LinearOpMode {
         limelight = new Limelight(Limelight.State.ACTIVE);
         waitForStart();
         while (opModeIsActive()){
+
             limelight.update();
             limelight.setPipeLineIndex(index);
             telemetry.update();

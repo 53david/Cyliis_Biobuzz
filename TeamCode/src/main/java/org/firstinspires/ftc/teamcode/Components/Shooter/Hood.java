@@ -6,14 +6,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
-import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
 @Config
 public class Hood {
     ServoImplEx servo;
-    public static double k = 0,offset = 0;
-    public static double idlePos = 0,shootPos = 0, pos = 0.19;
+    public static double k = -0.0004,offset = 0;
+    public static double idlePos = 0.31,shootPos = 0, pos = 0.35,maxPos = 0.72;
     public enum State{
         PAUSE(pos),
         IDLE(idlePos),
@@ -25,7 +25,7 @@ public class Hood {
     }
     public State state = State.IDLE;
     public Hood(){
-        servo = Hardware.ssh5;
+        servo = Hardware.ssh1;
         servo.setDirection(Servo.Direction.FORWARD);
     }
     public void update(){
@@ -41,9 +41,9 @@ public class Hood {
             case PAUSE:
                 break;
             case IDLE:
-                idlePos = calculateHoodPos(Odo.distance);
+                idlePos = ShooterCalculator.getHoodAngle();
             case SHOOT:
-                shootPos = Range.clip(calculateHoodPos(Odo.distance) + k * (Flywheel.targetVelocity-Flywheel.currentVelocity),0,0.5);
+                shootPos = Range.clip(ShooterCalculator.getHoodAngle() - k*(Flywheel.currentVelocity- Flywheel.targetVelocity),0.32,0.65);
                 break;
         }
     }
@@ -59,9 +59,6 @@ public class Hood {
     }
     public double getPosition(){
         return state.position;
-    }
-    public double calculateHoodPos(double distance){
-        return 0;
     }
 
 }

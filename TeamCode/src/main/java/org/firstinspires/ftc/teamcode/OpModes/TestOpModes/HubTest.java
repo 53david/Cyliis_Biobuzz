@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.OpModes.TestOpModes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -39,6 +41,7 @@ public class HubTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         DcMotorEx motor;
         ServoImplEx servo;
@@ -58,12 +61,13 @@ public class HubTest extends LinearOpMode {
                     break;
                 case SERVO:
                     servo=hardwareMap.get(ServoImplEx.class, string);
-                    servo.setPwmRange(new PwmControl.PwmRange(505 , 2495) );
+                    servo.setPwmRange(new PwmControl.PwmRange(500,2500));
                     servo.setPosition(position);
                     break;
                 case MOTOR:
                     motor=hardwareMap.get(DcMotorEx.class, string);
-                    motor.setPower(power);
+                    if (port.number == "2") motor.setPower(-power);
+                    else motor.setPower(power);
                     telemetry.addData("a" , motor.getVelocity());
                     break;
             }

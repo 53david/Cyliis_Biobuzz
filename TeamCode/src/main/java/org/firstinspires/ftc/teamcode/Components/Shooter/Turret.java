@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.Components.Shooter;
 
-import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.pp;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
@@ -16,25 +13,25 @@ import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 public class Turret {
     ServoImplEx servo1,servo2;
     double x = 0;
-    public static double minAngleLimit = 0.05, maxAngleLimit = 0.95;
-    public static double redX = 0,redY = -840;
-    public static double blueX = -1330,blueY = 435;
-    public static double offsetUp = 0, offsetDown = -600;
-    public double targetAngle = 0;
-    public static double a = 0;
+    public double gearRatio = 0.9;
+    public static double minAngleLimit = 0.046, maxAngleLimit = 0.96;
+    public static double redX = -1330,redY = -840;
+    public static double blueX = 1200,blueY = -765;
+    public static double offsetUpX = 1000, offsetDownX = 0;
+    public static double offsetUpY = 0, offsetDownY = 0;
+    public double targetAngle = 0,rAngle = 0;
     public double targetPosition = 0.5;
     public boolean pause = false;
-    public double maxAngle = Math.PI*2 + Math.PI/6;
-    public static double offset = 0;
-    public static double offsetX = 0,offsetY = 0;
+    public double maxAngle = Math.toRadians(394);
     public static double dx = 0, tx =0;
     public static double dy = 0, ty = 0;
     public enum HiveState{
-        UP(offsetUp),
-        DOWN(offsetDown);
-        double offset;
-        HiveState(double offset){
-            this.offset = offset;
+        UP(offsetUpX,offsetUpY),
+        DOWN(offsetDownX,offsetDownY);
+        double offsetX, offsetY;
+        HiveState(double offsetX,double offsetY){
+            this.offsetX = offsetX;
+            this.offsetY = offsetY;
         }
     }
     public enum State{
@@ -50,16 +47,17 @@ public class Turret {
             this.y = y;
         }
     }
-    public State state = State.BLUE;
-    public HiveState hiveState = HiveState.UP;
+    public static State state = State.BLUE;
+    public static HiveState hiveState = HiveState.UP;
     public Turret() {
-        servo1 = Hardware.ssh1;
-        servo2 = Hardware.ssh2;
-        servo1.setPwmRange(new PwmControl.PwmRange(500, 2500));
-        servo2.setPwmRange(new PwmControl.PwmRange(500, 2500));
+        servo1 = Hardware.ssh3;
+        servo2 = Hardware.ssh4;
 
-        servo1.setDirection(Servo.Direction.REVERSE);
-        servo2.setDirection(Servo.Direction.REVERSE);
+        servo1.setDirection(Servo.Direction.FORWARD);
+        servo2.setDirection(Servo.Direction.FORWARD);
+
+        servo1.setPwmRange(new PwmControl.PwmRange(500,2500));
+        servo2.setPwmRange(new PwmControl.PwmRange(500,2500));
 
     }
     public void update() {
@@ -76,12 +74,13 @@ public class Turret {
             servo2.setPosition(0.5);
             return;
         }
-        double rAngle = targetAngle + offset;
+        rAngle = targetAngle;
         rAngle -= Odo.heading;
         rAngle = normalizeRadians(rAngle);
-        rAngle = rAngle / maxAngle;
-
+        rAngle /= maxAngle;
+        rAngle += minAngleLimit;
         targetPosition = rAngle;
+
         targetPosition = Math.max(minAngleLimit, targetPosition);
         targetPosition = Math.min(maxAngleLimit, targetPosition);
 
@@ -92,8 +91,8 @@ public class Turret {
 
     private void updateAngle() {
 
-        dx = (state.x + offsetX + hiveState.offset) - (Odo.x +Odo.offsetX + Odo.xVelocity * a + tx * Math.cos(Odo.getHeading()));
-        dy = (state.y + offsetY) - (Odo.y +Odo.offsetY + Odo.yVelocity * a +tx * Math.sin(Odo.getHeading()));
+        dx = (state.x + hiveState.offsetX) - Odo.x;
+        dy = (state.y + hiveState.offsetY) - Odo.y;
         targetAngle = Math.atan2(dy, dx);
 
     }
@@ -107,16 +106,16 @@ public class Turret {
                 pause = false;
                 break;
         }
-        if (Odo.downHiveDistance>Odo.upHiveDistance) hiveState=HiveState.UP;
+        if (Odo.getX() > 1600) hiveState=HiveState.UP;
         else hiveState = HiveState.DOWN;
     }
     public void updateTargetPos(){
         State.RED.x = redX; State.RED.y = redY;
         State.BLUE.x = blueX; State.BLUE.y = blueY;
-        HiveState.UP.offset = offsetUp;
-        HiveState.DOWN.offset = offsetDown;
-        Odo.targetX = state.x;
-        Odo.targetY = state.y;
+        HiveState.UP.offsetX = offsetUpX;
+        HiveState.UP.offsetY = offsetUpY;
+        HiveState.DOWN.offsetX = offsetDownX;
+        HiveState.DOWN.offsetY = offsetDownY;
     }
     private double normalizeRadians(double angle) {
         angle %= (2.0 * Math.PI);
@@ -125,12 +124,19 @@ public class Turret {
 
     }
     public void setState(State state){
-        this.state = state;
+        Turret.state = state;
     }
     public State getState(){
         return state;
     }
     public HiveState getHiveState(){
         return hiveState;
+    }
+    public static double getTargetX(){
+        return state.x + hiveState.offsetX;
+    }
+
+    public static double getTargetY(){
+        return state.y;
     }
 }

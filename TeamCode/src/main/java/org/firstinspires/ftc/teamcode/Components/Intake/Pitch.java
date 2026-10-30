@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class Pitch {
     Servo servo;
-    public static double idlePos = 0, transferPos = 0,acc = 20, maxVel = 20,dec = 20;
-    BetterMotionProfile profile = new BetterMotionProfile(maxVel,acc,dec);
+    public static double idlePos = 0.285, transferPos = 0.505,acc = 20, maxVel = 20,dec = 20,currentPos;
+    BetterMotionProfile profile;
     public enum State{
         IDLE(idlePos),
         SHOOT(transferPos),
@@ -26,10 +26,13 @@ public class Pitch {
             this.nextState = nextState;
         }
     }
-    public State state;
+    public static State state;
     public Pitch(){
         state = State.IDLE;
         servo = Hardware.ssh0;
+        profile = new BetterMotionProfile(maxVel,acc,dec);
+        profile.setMotion(idlePos , idlePos , 0);
+
     }
     public void update(){
         updateState();
@@ -51,13 +54,18 @@ public class Pitch {
         State.GOING_SHOOT.position = transferPos;
     }
     public void updateHardware(){
+        currentPos = profile.getPosition();
         profile.update();
-        if(profile.finalPosition != state.position) profile.setMotion(profile.getPosition(), state.position, profile.getVelocity());
+        if(profile.finalPosition != state.position) profile.setMotion(currentPos, state.position, profile.getVelocity());
         servo.setPosition(profile.getPosition());
-    }    public void setState(State state){
+    }
+    public void setState(State state){
         this.state = state;
     }
     public State getState(){
         return state;
+    }
+    public static boolean isOptimal(){
+        return Math.abs(state.position-currentPos) == 0;
     }
 }

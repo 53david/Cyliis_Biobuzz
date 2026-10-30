@@ -17,6 +17,7 @@ public class BBTest extends LinearOpMode {
         storage = new Storage();
         waitForStart();
         while (opModeIsActive()){
+
             storage.update();
             telemetry.addData("slot1",storage.getStateSensor1());
             telemetry.addData("slot2",storage.getStateSensor2());

@@ -1,41 +1,38 @@
 package org.firstinspires.ftc.teamcode.LogicNodes;
 
-import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.edgePos;
 import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.flower1Pos;
 import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.flower2Pos;
 import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.gardenPos;
 import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.goingFlower1Pos;
 import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.goingFlower2Pos;
-import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.goingGardenPos;
-import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.goingLoadingZonePos;
-import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.loadingZonePos;
 import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.parkPos;
 import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.shootPos;
-import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.trussPos;
-import static org.firstinspires.ftc.teamcode.Trajectories.BlueSoloTrajectory.underHivePos;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
-import org.firstinspires.ftc.teamcode.Components.Intake.FlowerRamp;
+import org.firstinspires.ftc.teamcode.Components.Intake.Ramp;
 import org.firstinspires.ftc.teamcode.Components.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Components.Intake.Storage;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Shooter;
 import org.firstinspires.ftc.teamcode.Robot.Node;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
+import org.firstinspires.ftc.teamcode.Wrappers.Limelight;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
-
-public class BlueSolo {
+@Config
+public class BlueAuto {
     ElapsedTime timer, globalTimer;
     Chassis chassis;
     Intake intake;
     Shooter shooter;
+    Limelight limelight;
     Odo odo;
-    Node shoot, goingTruss, goingEdge, goingFlower1, goingFlower2, goingGarden, goingLoadingZone, flower1, flower2, garden, loadingZone, hive, park;
+    Node shoot, goingFlower1, goingFlower2, flower1, flower2, garden, park;
     public Node currentNode;
 
-    public BlueSolo(HardwareMap hardwareMap) {
+    public BlueAuto(HardwareMap hardwareMap) {
         Hardware.init(hardwareMap);
         timer = new ElapsedTime();
         globalTimer = new ElapsedTime();
@@ -45,25 +42,21 @@ public class BlueSolo {
         chassis = new Chassis(Chassis.State.PID);
         intake = new Intake();
         shooter = new Shooter(Shooter.State.ACTIVE);
-
+        limelight = new Limelight(Limelight.State.STOP);
         shoot = new Node("shoot");
-        goingTruss = new Node("goingTruss");
-        goingEdge = new Node("goingEdge");
         goingFlower1 = new Node("goingFlower1");
         goingFlower2 = new Node("goingFlower2");
-        goingGarden = new Node("goingGarden");
-        goingLoadingZone = new Node("goingLoadingZone");
         flower1 = new Node("flower1");
         flower2 = new Node("flower2");
         garden = new Node("garden");
-        loadingZone = new Node("loadingZone");
-        hive = new Node("hive");
         park = new Node("park");
         currentNode = shoot;
 
         shoot.addConditions(
                 () -> {
-                    chassis.setTargetPosition(shootPos[(shoot.index+1)/2]);
+                    intake.retractRamp();
+                    if (limelight.getHivePosition() == Limelight.HivePosition.UP) chassis.setTargetPosition(shootPos[0]);
+                    else chassis.setTargetPosition(shootPos[1]);
                     if (intake.storage.getState() == Storage.State.READY_FOR_TRANSFER && intake.getState()!= Intake.State.SHOOT) {intake.setState(Intake.State.REVERSE);}
                     else if (intake.storage.getState() == Storage.State.WAITING_FOR_POLLEN) {intake.setState(Intake.State.IDLE);}
                     if (chassis.inPosition(120, 120, 0.1)) {intake.setState(Intake.State.SHOOT);shooter.setState(Shooter.State.SHOOT);}
@@ -71,69 +64,40 @@ public class BlueSolo {
                 () -> {
                     return intake.storage.getState() == Storage.State.NO_POLLEN;
                 },
-                new Node[]{goingGarden,goingFlower2,goingFlower1}
-        );
-        goingGarden.addConditions(
-                ()->{
-                    chassis.setTargetPosition(goingGardenPos,false);
-                    intake.setState(Intake.State.INTAKE);
-                },
-                ()->{
-                    return chassis.inPosition(300,300,0.12);
-                },
-                new Node[]{garden}
+                new Node[]{garden,goingFlower2,goingFlower1}
         );
         garden.addConditions(
                 ()->{
+                    intake.retractRamp();
                     chassis.setTargetPosition(gardenPos);
                     intake.setState(Intake.State.INTAKE);
-                    if (chassis.inPosition(110,110,0.1))chassis.setLowPowerMode(true);
-                },
+                    if (chassis.inPosition(110,110,0.1))chassis.setPIDCoefficients(0.0065,0,0);
+                    else timer.reset();
+                    },
                 ()->{
-                    return chassis.inPosition(60,60,0.1);
-                },
-                new Node[]{shoot}
-
-        );
-        goingLoadingZone.addConditions(
-                ()->{
-                    chassis.setTargetPosition(goingLoadingZonePos,false);
-                    intake.setState(Intake.State.INTAKE);
-                },
-                ()->{
-                    return chassis.inPosition(300,300,0.1);
-                },
-                new Node[]{loadingZone}
-        );
-        loadingZone.addConditions(
-                ()->{
-                    chassis.setTargetPosition(loadingZonePos);
-                    intake.setState(Intake.State.INTAKE);
-                    if (chassis.inPosition(70,70,0.1)) chassis.setLowPowerMode(true);
-                },
-                ()->{
-                    return chassis.inPosition(45,45,0.1);
+                    return timer.seconds()>1.5 || intake.storage.getState() == Storage.State.READY_FOR_TRANSFER;
                 },
                 new Node[]{shoot}
 
         );
         goingFlower1.addConditions(
                 () -> {
+                    intake.setState(Intake.State.INTAKE);
                     chassis.setTargetPosition(goingFlower1Pos);
-                    if (chassis.inPosition(220,220,0.1)) intake.setState(Intake.State.INTAKE_FROM_FLOWER);
+                    if (chassis.inPosition(220,220,0.1)) intake.deployRamp();
                 },
                 ()->{
-                    return intake.flowerRamp.getState() == FlowerRamp.State.DOWN;
+                    return intake.ramp.getState() == Ramp.State.DOWN;
                 },
                 new Node[]{flower1}
                 );
         flower1.addConditions(
                 ()->{
-                    chassis.setTargetPosition(flower1Pos);
-                    intake.setState(Intake.State.INTAKE_FROM_FLOWER);
-                    if (!chassis.inPosition(80,80,0.1)) timer.reset();
-                    if (timer.seconds()>0.15) chassis.turnOn();
-                },
+                    intake.setState(Intake.State.INTAKE);
+                    chassis.setTargetPosition(flower1Pos); intake.deployRamp();
+                    if (chassis.inPosition(85,85,0.1))chassis.setPIDCoefficients(0.0065,0,0);
+                    else timer.reset();
+                    },
                 ()->{
                     return intake.storage.getState()== Storage.State.READY_FOR_TRANSFER;
                 },
@@ -141,53 +105,25 @@ public class BlueSolo {
         );
         goingFlower2.addConditions(
                 () -> {
+                    intake.setState(Intake.State.INTAKE);
                     chassis.setTargetPosition(goingFlower2Pos,false);
-                    if (chassis.inPosition(220,220,0.1)) intake.setState(Intake.State.INTAKE_FROM_FLOWER);
+                    if (chassis.inPosition(220,220,0.1)) intake.deployRamp();
                 },
                 ()->{
-                    return intake.flowerRamp.getState() == FlowerRamp.State.DOWN;
+                    return intake.ramp.getState() == Ramp.State.DOWN;
                 },
                 new Node[]{flower2}
         );
         flower2.addConditions(
                 ()->{
+                    intake.setState(Intake.State.INTAKE);
                     chassis.setTargetPosition(flower2Pos);
-                    intake.setState(Intake.State.INTAKE_FROM_FLOWER);
-                    if (!chassis.inPosition(80,80,0.1)) timer.reset();
-                    if (timer.seconds()>0.15) chassis.turnOn();
+                    intake.deployRamp();
+                    if (chassis.inPosition(110,110,0.1))chassis.setPIDCoefficients(0.0065,0,0);
+                    else timer.reset();
                 },
                 ()->{
                     return intake.storage.getState()== Storage.State.READY_FOR_TRANSFER;
-                },
-                new Node[]{shoot}
-        );
-        goingTruss.addConditions(
-                ()->{
-                    intake.setState(Intake.State.INTAKE);
-                    chassis.setTargetPosition(trussPos);
-                },
-                ()->{
-                    return chassis.inPosition(400,400,0.14);
-                },
-                new Node[]{hive}
-        );
-        goingEdge.addConditions(
-                ()->{
-                    intake.setState(Intake.State.INTAKE);
-                    chassis.setTargetPosition(edgePos);
-                },
-                ()->{
-                    return chassis.inPosition(400,400,0.14);
-                },
-                new Node[]{hive}
-        );
-        hive.addConditions(
-                ()->{
-                    intake.setState(Intake.State.INTAKE);
-                    chassis.setTargetPosition(underHivePos[(shoot.index+1)%2]);
-                },
-                ()->{
-                    return chassis.inPosition(60,60,0.1);
                 },
                 new Node[]{shoot}
         );
@@ -195,6 +131,7 @@ public class BlueSolo {
                 ()->{
                     chassis.setTargetPosition(parkPos);
                     intake.setState(Intake.State.IDLE);
+                    shooter.setState(Shooter.State.IDLE);
                 },
                 ()->{
                     return chassis.inPosition(30,30,0.1);
@@ -211,7 +148,7 @@ public class BlueSolo {
         odo.update();
 
         if (currentNode != flower1 && currentNode != flower2) chassis.turnOn();
-        if (currentNode != garden) chassis.setLowPowerMode(false);
+        if (currentNode != garden) chassis.setPIDCoefficients(0.0065,0,0);
         if (currentNode != shoot && globalTimer.seconds()>29) currentNode = park;
         if (currentNode.transition()){
             currentNode = currentNode.next[Math.min(currentNode.index++, currentNode.next.length-1)];

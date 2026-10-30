@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.Intake;
 
+import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.gm1;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Intake {
@@ -8,16 +10,11 @@ public class Intake {
     public Transfer transfer;
     public Pitch pitch;
     public Storage storage;
-    public FlowerRamp flowerRamp;
+    public Ramp ramp;
     public enum State{
         IDLE,
         REVERSE,
         INTAKE,
-        INTAKE_FROM_FLOWER,
-        REVERSE_FROM_FLOWER,
-        IDLE_FROM_FLOWER,
-        CONTINUOUS_SHOOT,
-        SHOOT_FROM_FLOWER,
         SHOOT(IDLE);
         State nextState;
         State(State nextState){
@@ -28,6 +25,7 @@ public class Intake {
         }
     }
     public State state;
+    public static State state1;
     public Intake(){
         timer = new ElapsedTime();
         state = State.IDLE;
@@ -35,6 +33,7 @@ public class Intake {
         transfer = new Transfer();
         pitch = new Pitch();
         storage = new Storage();
+        ramp = new Ramp();
     }
     public void update(){
         stateUpdate();
@@ -42,68 +41,34 @@ public class Intake {
         transfer.update();
         pitch.update();
         storage.update();
-        flowerRamp.updateHardware();
+        ramp.update();
 
         if (state != State.SHOOT) timer.reset();
     }
     public void stateUpdate(){
+        state1 = state;
         switch (state){
             case IDLE:
                 activeIntake.setState(ActiveIntake.State.IDLE);
                 transfer.setState(Transfer.State.IDLE);
                 pitch.setState(Pitch.State.IDLE);
-                if (flowerRamp.getState()!= FlowerRamp.State.GOING_UP && flowerRamp.getState()!= FlowerRamp.State.UP) flowerRamp.setState(FlowerRamp.State.GOING_UP);
                 break;
-            case IDLE_FROM_FLOWER:
-                activeIntake.setState(ActiveIntake.State.IDLE);
-                transfer.setState(Transfer.State.IDLE);
-                pitch.setState(Pitch.State.IDLE);
-                if (flowerRamp.getState()!= FlowerRamp.State.GOING_UP && flowerRamp.getState()!= FlowerRamp.State.DOWN) flowerRamp.setState(FlowerRamp.State.GOING_UP);
             case INTAKE:
                 activeIntake.setState(ActiveIntake.State.INTAKE);
                 transfer.setState(Transfer.State.ACTIVE);
                 pitch.setState(Pitch.State.IDLE);
-                if (flowerRamp.getState()!= FlowerRamp.State.GOING_UP && flowerRamp.getState()!= FlowerRamp.State.UP) flowerRamp.setState(FlowerRamp.State.GOING_UP);
-                break;
-            case INTAKE_FROM_FLOWER:
-                activeIntake.setState(ActiveIntake.State.INTAKE);
-                transfer.setState(Transfer.State.ACTIVE);
-                pitch.setState(Pitch.State.IDLE);
-                if (flowerRamp.getState()!= FlowerRamp.State.GOING_DOWN && flowerRamp.getState()!= FlowerRamp.State.DOWN) flowerRamp.setState(FlowerRamp.State.GOING_DOWN);
-                break;
-            case REVERSE_FROM_FLOWER:
-                activeIntake.setState(ActiveIntake.State.REVERSE);
-                transfer.setState(Transfer.State.ACTIVE);
-                pitch.setState(Pitch.State.IDLE);
-                if (flowerRamp.getState()!= FlowerRamp.State.GOING_DOWN && flowerRamp.getState()!= FlowerRamp.State.DOWN) flowerRamp.setState(FlowerRamp.State.GOING_DOWN);
                 break;
             case REVERSE:
                 activeIntake.setState(ActiveIntake.State.REVERSE);
-                transfer.setState(Transfer.State.IDLE);
+                transfer.setState(Transfer.State.REVERSE);
                 pitch.setState(Pitch.State.IDLE);
-                if (flowerRamp.getState()!= FlowerRamp.State.GOING_UP && flowerRamp.getState()!= FlowerRamp.State.UP) flowerRamp.setState(FlowerRamp.State.GOING_UP);
                 break;
             case SHOOT:
-                if (timer.seconds()>0.5 || storage.getState() == Storage.State.NO_POLLEN) state = state.nextState;
+                if (!Pitch.isOptimal()) timer.reset();
+                else if (Pitch.isOptimal() && timer.seconds()>0.15) {activeIntake.setState(ActiveIntake.State.SHOOT); transfer.setState(Transfer.State.SHOOT);}
+                if (timer.seconds()>1.25 && !gm1.a) state = state.nextState;
                 if (pitch.getState() != Pitch.State.GOING_SHOOT && pitch.getState()!= Pitch.State.SHOOT) pitch.setState(Pitch.State.GOING_SHOOT);
-                if (pitch.getState() == Pitch.State.SHOOT) activeIntake.setState(ActiveIntake.State.SHOOT);
-                if (flowerRamp.getState() != FlowerRamp.State.GOING_UP && flowerRamp.getState() != FlowerRamp.State.UP)flowerRamp.setState(FlowerRamp.State.GOING_UP);
-                transfer.setState(Transfer.State.SHOOT);
-                pitch.setState(Pitch.State.SHOOT);
-                break;
-            case CONTINUOUS_SHOOT:
-                if (pitch.getState() != Pitch.State.GOING_SHOOT && pitch.getState()!= Pitch.State.SHOOT) pitch.setState(Pitch.State.GOING_SHOOT);
-                if (pitch.getState() == Pitch.State.SHOOT) activeIntake.setState(ActiveIntake.State.SHOOT);
-                if (flowerRamp.getState() != FlowerRamp.State.GOING_UP && flowerRamp.getState() != FlowerRamp.State.UP)flowerRamp.setState(FlowerRamp.State.GOING_UP);
-                transfer.setState(Transfer.State.SHOOT);
-                pitch.setState(Pitch.State.SHOOT);
-                break;
-            case SHOOT_FROM_FLOWER:
-                if (pitch.getState() != Pitch.State.GOING_SHOOT && pitch.getState()!= Pitch.State.SHOOT) pitch.setState(Pitch.State.GOING_SHOOT);
-                if (pitch.getState() == Pitch.State.SHOOT) activeIntake.setState(ActiveIntake.State.SHOOT);
-                if (flowerRamp.getState()!= FlowerRamp.State.GOING_DOWN && flowerRamp.getState()!= FlowerRamp.State.DOWN) flowerRamp.setState(FlowerRamp.State.GOING_DOWN);
-                transfer.setState(Transfer.State.SHOOT);
-                pitch.setState(Pitch.State.SHOOT);
+
                 break;
         }
     }
@@ -112,5 +77,15 @@ public class Intake {
     }
     public State getState(){
         return state;
+    }
+    public void deployRamp(){
+        if (ramp.getState() != Ramp.State.GOING_DOWN && ramp.getState() != Ramp.State.DOWN)
+            ramp.setState(Ramp.State.GOING_DOWN);
+
+    }
+    public void retractRamp(){
+        if (ramp.getState() != Ramp.State.GOING_UP && ramp.getState() != Ramp.State.UP)
+            ramp.setState(Ramp.State.GOING_UP);
+
     }
 }

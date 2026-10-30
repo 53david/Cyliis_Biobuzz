@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components.Intake;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -33,7 +34,7 @@ public class Storage {
 
         if (slot1 && slot2 && slot3 && slot4) {timer.reset();setState(State.READY_FOR_TRANSFER);}
         else if (slot1 || slot2 || slot3 || slot4) {timer.reset();setState(State.WAITING_FOR_POLLEN);}
-        else if (timer.seconds()>0.052)setState(State.NO_POLLEN);
+        else if (timer.seconds()>0.052) setState(State.NO_POLLEN);
     }
     public void setState(State state){
         this.state = state;

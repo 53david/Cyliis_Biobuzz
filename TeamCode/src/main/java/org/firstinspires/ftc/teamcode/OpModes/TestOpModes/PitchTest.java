@@ -13,7 +13,11 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @TeleOp
 public class PitchTest extends LinearOpMode {
     Pitch pitch;
-    public static int x = 0;
+    enum State{
+        TRANSFER,
+        IDLE,
+    };
+    static State state = State.IDLE;
     @Override
     public void runOpMode(){
         Hardware.init(hardwareMap);
@@ -21,9 +25,9 @@ public class PitchTest extends LinearOpMode {
         pitch = new Pitch();
         waitForStart();
         while (opModeIsActive()){
+            if (state == State.TRANSFER && pitch.getState()!= Pitch.State.GOING_SHOOT && pitch.getState()!= Pitch.State.SHOOT) pitch.setState(Pitch.State.GOING_SHOOT);
+            if (state == State.TRANSFER && pitch.getState()!= Pitch.State.GOING_IDLE && pitch.getState()!= Pitch.State.IDLE) pitch.setState(Pitch.State.GOING_IDLE);
             pitch.update();
-            if (x==0)pitch.setState(Pitch.State.IDLE);
-            if (x==1)pitch.setState(Pitch.State.SHOOT);
             telemetry.addData("State",pitch.getState());
             telemetry.update();
 
