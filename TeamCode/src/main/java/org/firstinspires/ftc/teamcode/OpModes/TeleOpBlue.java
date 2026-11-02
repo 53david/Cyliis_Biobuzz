@@ -45,7 +45,7 @@ public class TeleOpBlue extends LinearOpMode {
 
             odo.update();
             if  (gm1.psWasPressed())odo.reset();
-            double heading = -Odo.getHeading() + Math.PI/2;
+            double heading = -Odo.getHeading() - Math.PI/2;
             double X = gm1.left_stick_x;
             double Y = -gm1.left_stick_y;
             double x = X * Math.cos(heading) - Y * Math.sin(heading);

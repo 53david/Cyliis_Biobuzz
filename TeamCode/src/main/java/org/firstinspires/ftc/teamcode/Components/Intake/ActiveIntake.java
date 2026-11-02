@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class ActiveIntake {
     DcMotorEx motor;
-    public static double intakePower = 1, reversePower = -0.45, shootPower = 0.65, idlePower = 0;
+    public static double intakePower = 1, reversePower = -0.55, shootPower = 0.65, idlePower = 0;
     public enum State{
         INTAKE(intakePower),
         REVERSE(reversePower),
@@ -29,8 +29,8 @@ public class ActiveIntake {
     public ActiveIntake(){
         state = State.IDLE;
         this.motor = Hardware.mch0;
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     public void update(){
         stateUpdate();

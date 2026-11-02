@@ -13,11 +13,11 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @TeleOp
 public class PitchTest extends LinearOpMode {
     Pitch pitch;
-    enum State{
+    public enum State{
         TRANSFER,
         IDLE,
     };
-    static State state = State.IDLE;
+    public static State state = State.IDLE;
     @Override
     public void runOpMode(){
         Hardware.init(hardwareMap);

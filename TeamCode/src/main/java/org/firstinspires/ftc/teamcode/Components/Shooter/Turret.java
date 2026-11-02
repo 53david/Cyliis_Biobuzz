@@ -12,12 +12,12 @@ import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 @Config
 public class Turret {
     ServoImplEx servo1,servo2;
-    double x = 0;
+    public static double x = 0;
     public double gearRatio = 0.9;
-    public static double minAngleLimit = 0.046, maxAngleLimit = 0.96;
-    public static double redX = -1330,redY = -840;
-    public static double blueX = 1200,blueY = -765;
-    public static double offsetUpX = 1000, offsetDownX = 0;
+    public static double minAngleLimit = 0.047, maxAngleLimit = 0.95;
+    public static double blueX = 1370,blueY = 1380;
+    public static double redX = 1370,redY = -1380;
+    public static double offsetUpX = 600, offsetDownX = 0;
     public static double offsetUpY = 0, offsetDownY = 0;
     public double targetAngle = 0,rAngle = 0;
     public double targetPosition = 0.5;
@@ -84,8 +84,8 @@ public class Turret {
         targetPosition = Math.max(minAngleLimit, targetPosition);
         targetPosition = Math.min(maxAngleLimit, targetPosition);
 
-        servo1.setPosition(targetPosition);
-        servo2.setPosition(targetPosition);
+        servo1.setPosition(targetPosition + x);
+        servo2.setPosition(targetPosition - x);
 
     }
 
@@ -106,7 +106,7 @@ public class Turret {
                 pause = false;
                 break;
         }
-        if (Odo.getX() > 1600) hiveState=HiveState.UP;
+        if (Odo.getX() > 1680) hiveState=HiveState.UP;
         else hiveState = HiveState.DOWN;
     }
     public void updateTargetPos(){

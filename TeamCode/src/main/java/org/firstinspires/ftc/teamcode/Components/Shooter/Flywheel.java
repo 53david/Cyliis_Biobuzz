@@ -14,14 +14,15 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class Flywheel {
     DcMotorEx encoder,shoot1,shoot2;
-    public static double Kp = 0.00055;
+    public static double Kp = 0.0005;
     public static double Ks = 0;
-    public static double Kv = 0.000425;
+    public static double Kv = 0.000395;
     public static double Ka = 0;
     public static double filterParameter = 1;
     LowPassFilter passFilter = new LowPassFilter(filterParameter,0);
-    public static double shootPower = 0,idlePower = 1300;
+    public static double shootPower = 0,idlePower = 1400;
     public static double currentVelocity = 0,targetVelocity =0,prevVelocity = 0;
+    public static double x = 0;
     public enum State{
         IDLE(idlePower),
         SHOOT(shootPower);

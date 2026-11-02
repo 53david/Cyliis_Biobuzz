@@ -40,15 +40,15 @@ public class Shooter {
                 timer.reset();
                 break;
             case ACTIVE:
-                flyWheel.setState(Flywheel.State.IDLE);
+                flyWheel.setState(Flywheel.State.SHOOT);
                 hood.setState(Hood.State.IDLE);
                 timer.reset();
                 break;
             case SHOOT:
-                flyWheel.setState(Flywheel.State.IDLE);
+                flyWheel.setState(Flywheel.State.SHOOT);
                 hood.setState(Hood.State.SHOOT);
                 if (Pitch.state != Pitch.State.SHOOT) timer.reset();
-                if (timer.seconds() > 1.25 && !gm1.a) state = State.ACTIVE;
+                if (timer.seconds() > 0.5 && !gm1.a) state = State.ACTIVE;
                 break;
         }
 

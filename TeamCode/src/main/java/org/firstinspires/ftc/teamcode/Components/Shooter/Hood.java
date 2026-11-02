@@ -12,8 +12,9 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class Hood {
     ServoImplEx servo;
-    public static double k = -0.0004,offset = 0;
-    public static double idlePos = 0.31,shootPos = 0, pos = 0.35,maxPos = 0.72;
+    public static double k = -0.000085,offset = 0;
+    public static double x = 0;
+    public static double idlePos = 0.35,shootPos = 0, pos = 0.42,maxPos = 0.72;
     public enum State{
         PAUSE(pos),
         IDLE(idlePos),
@@ -41,9 +42,9 @@ public class Hood {
             case PAUSE:
                 break;
             case IDLE:
-                idlePos = ShooterCalculator.getHoodAngle();
+                idlePos = Range.clip(ShooterCalculator.getHoodAngle(),0.335,0.575);
             case SHOOT:
-                shootPos = Range.clip(ShooterCalculator.getHoodAngle() - k*(Flywheel.currentVelocity- Flywheel.targetVelocity),0.32,0.65);
+                shootPos = Range.clip(ShooterCalculator.getHoodAngle() - k*(Flywheel.currentVelocity- Flywheel.targetVelocity),0.35,0.575);
                 break;
         }
     }

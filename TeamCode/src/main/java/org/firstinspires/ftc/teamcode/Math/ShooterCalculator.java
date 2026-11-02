@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.Math;
 
+import static org.firstinspires.ftc.teamcode.Components.Shooter.Flywheel.idlePower;
+import static org.firstinspires.ftc.teamcode.Components.Shooter.Hood.pos;
 import static org.firstinspires.ftc.teamcode.Components.Shooter.Turret.tx;
 import static org.firstinspires.ftc.teamcode.Components.Shooter.Turret.ty;
+
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
@@ -20,20 +24,7 @@ public class ShooterCalculator {
         y = Odo.y;//(Odo.y + (Odo.getVelY() * t) + (ay * (t * t)/2) + (tx * Math.sin(Odo.getHeading()) + ty * Math.cos(Odo.getHeading())));
         distance = Math.sqrt((targetX - x)*(targetX - x) + (targetY - y)*(targetY - y));
         velocity = getVelocity();
-        updateTime();
 
-    }
-    public void updateTime(){
-        double[] v = {
-                0.35,
-                0.365,
-                0.37,
-                0.085,
-                0.1,
-        };
-        int i =  Math.abs((int)velocity/100);
-        if (i > v.length) i = v.length - 1;
-        t = v[i] + (v[Math.min(i+1,v.length-1)] - v[i]) * (velocity % 100)/100;
     }
     public static double getTime(){
         return t;
@@ -48,10 +39,42 @@ public class ShooterCalculator {
         return ay;
     }
     public static double getVelocity(){
-        return 0.221519*distance+1115.82278;
+        double[]v = {
+                1280,
+                1350,
+                1360,
+                1360,
+                1380,
+                1400,
+                1420,
+                1420,
+                1440,
+                1460,
+                1470,
+                1480,
+        };
+        if (distance<=800) distance = 800;
+        int i= Math.min((int) (distance/100-8),v.length-1);
+        return v[i] + (v[Math.min(i+1,v.length-1)]-v[i]) * (distance % 100/100);
     }
     public static double getHoodAngle(){
-       return 0.000205696*distance+0.131835;
+        double[]v = {
+                0.33,
+                0.395,
+                0.41,
+                0.415,
+                0.4295,
+                0.431,
+                0.435,
+                0.438,
+                0.45,
+                0.452,
+                0.456,
+                0.46,
+        };
+        if (distance<=800) distance = 800;
+        int i= Math.min((int) (distance/100-8),v.length-1);
+        return v[i] + (v[Math.min(i+1,v.length-1)]-v[i]) * (distance % 100/100);
     }
 
 }

@@ -60,15 +60,16 @@ public class Intake {
                 break;
             case REVERSE:
                 activeIntake.setState(ActiveIntake.State.REVERSE);
-                transfer.setState(Transfer.State.REVERSE);
+                transfer.setState(Transfer.State.IDLE);
                 pitch.setState(Pitch.State.IDLE);
                 break;
             case SHOOT:
-                if (!Pitch.isOptimal()) timer.reset();
-                else if (Pitch.isOptimal() && timer.seconds()>0.15) {activeIntake.setState(ActiveIntake.State.SHOOT); transfer.setState(Transfer.State.SHOOT);}
-                if (timer.seconds()>1.25 && !gm1.a) state = state.nextState;
+                if (!Pitch.isOptimal()) {transfer.setState(Transfer.State.IDLE); timer.reset();}
+                else if (Pitch.isOptimal()) {transfer.setState(Transfer.State.SHOOT);}
+                if (timer.seconds()>0.55 && !gm1.a) state = state.nextState;
                 if (pitch.getState() != Pitch.State.GOING_SHOOT && pitch.getState()!= Pitch.State.SHOOT) pitch.setState(Pitch.State.GOING_SHOOT);
-
+                if (gm1.right_bumper)activeIntake.setState(ActiveIntake.State.SHOOT);
+                else activeIntake.setState(ActiveIntake.State.IDLE);
                 break;
         }
     }

@@ -36,7 +36,6 @@ public class TurretTest extends LinearOpMode {
             p = Math.min(0.96, p);
             p = Math.max(0.046, p);
 
-
             turret.update();
             odo.update();
 

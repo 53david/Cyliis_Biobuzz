@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class Transfer {
     DcMotorEx motor;
-    public static double intakePower = 0.6, reversePower = -1, shootPower = 1, idlePower = 0;
-    public static double Ks = 0.035;
+    public static double intakePower = 0.72, reversePower = -1, shootPower = 0.5, idlePower = 0;
+    public static double Ks = 0;
     public enum State{
         ACTIVE(intakePower),
         REVERSE(reversePower),
@@ -29,7 +29,8 @@ public class Transfer {
     public Transfer(){
         state = State.IDLE;
         this.motor = Hardware.mch1;
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     public void update(){
         stateUpdate();

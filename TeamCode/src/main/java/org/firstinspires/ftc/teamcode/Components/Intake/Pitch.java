@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class Pitch {
     Servo servo;
-    public static double idlePos = 0.285, transferPos = 0.505,acc = 20, maxVel = 20,dec = 20,currentPos;
+    public static double idlePos = 0.52, transferPos = 0.05,acc = 20, maxVel = 20,dec = 20,currentPos;
     BetterMotionProfile profile;
     public enum State{
         IDLE(idlePos),
@@ -43,7 +43,7 @@ public class Pitch {
         switch (state){
             case GOING_SHOOT:
             case GOING_IDLE:
-                if (profile.getPosition() == profile.finalPosition) state = state.nextState;
+                if (servo.getPosition() == state.position) state = state.nextState;
                 break;
         }
     }
