@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class Hood {
     ServoImplEx servo;
-    public static double k = -0.000085,offset = 0;
+    public static double k = -0.00003,offset = 0;
     public static double x = 0;
     public static double idlePos = 0.35,shootPos = 0, pos = 0.42,maxPos = 0.72;
     public enum State{

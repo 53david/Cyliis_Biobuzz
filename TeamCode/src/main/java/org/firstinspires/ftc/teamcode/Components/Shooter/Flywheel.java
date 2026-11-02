@@ -14,9 +14,9 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class Flywheel {
     DcMotorEx encoder,shoot1,shoot2;
-    public static double Kp = 0.0005;
+    public static double Kp = 0.000495;
     public static double Ks = 0;
-    public static double Kv = 0.000395;
+    public static double Kv = 0.000405;
     public static double Ka = 0;
     public static double filterParameter = 1;
     LowPassFilter passFilter = new LowPassFilter(filterParameter,0);
