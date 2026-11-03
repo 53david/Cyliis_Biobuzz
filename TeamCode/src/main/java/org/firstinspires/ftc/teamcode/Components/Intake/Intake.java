@@ -25,7 +25,6 @@ public class Intake {
         }
     }
     public State state;
-    public static State state1;
     public Intake(){
         timer = new ElapsedTime();
         state = State.IDLE;
@@ -46,7 +45,6 @@ public class Intake {
         if (state != State.SHOOT) timer.reset();
     }
     public void stateUpdate(){
-        state1 = state;
         switch (state){
             case IDLE:
                 activeIntake.setState(ActiveIntake.State.IDLE);
@@ -55,7 +53,8 @@ public class Intake {
                 break;
             case INTAKE:
                 activeIntake.setState(ActiveIntake.State.INTAKE);
-                transfer.setState(Transfer.State.ACTIVE);
+                if (!Pitch.isOptimal()) transfer.setState(Transfer.State.LOW_POWER);
+                else transfer.setState(Transfer.State.ACTIVE);
                 pitch.setState(Pitch.State.IDLE);
                 break;
             case REVERSE:
@@ -66,7 +65,7 @@ public class Intake {
             case SHOOT:
                 if (!Pitch.isOptimal()) {transfer.setState(Transfer.State.IDLE); timer.reset();}
                 else if (Pitch.isOptimal()) {transfer.setState(Transfer.State.SHOOT);}
-                if (timer.seconds()>0.55 && !gm1.a) state = state.nextState;
+                if (timer.seconds()>0.45 && !gm1.a) state = state.nextState;
                 if (pitch.getState() != Pitch.State.GOING_SHOOT && pitch.getState()!= Pitch.State.SHOOT) pitch.setState(Pitch.State.GOING_SHOOT);
                 if (gm1.right_bumper)activeIntake.setState(ActiveIntake.State.SHOOT);
                 else activeIntake.setState(ActiveIntake.State.IDLE);

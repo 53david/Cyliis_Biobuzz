@@ -1,14 +1,17 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.Voltage;
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.gm1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.gm2;
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.prevgm1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.prevgm2;
+import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.x;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Components.Intake.Ramp;
@@ -23,6 +26,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
 @TeleOp
 public class TeleOpRed extends LinearOpMode {
+    VoltageSensor voltageSensor;
     Chassis chassis;
     Intake intake;
     Odo odo;
@@ -31,6 +35,7 @@ public class TeleOpRed extends LinearOpMode {
     public void runOpMode(){
 
         Hardware.init(hardwareMap);
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         chassis = new Chassis(Chassis.State.DRIVE);
         odo = new Odo();
@@ -40,6 +45,7 @@ public class TeleOpRed extends LinearOpMode {
         intake = new Intake();
         waitForStart();
         while (opModeIsActive()){
+            Voltage = x/ voltageSensor.getVoltage();
             gm1.copy(gamepad1);
             gm2.copy(gamepad2);
 

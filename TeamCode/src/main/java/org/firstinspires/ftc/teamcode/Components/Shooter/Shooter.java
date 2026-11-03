@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components.Shooter;
 
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.gm1;
 
+import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Components.Intake.Pitch;
@@ -48,12 +49,11 @@ public class Shooter {
                 flyWheel.setState(Flywheel.State.SHOOT);
                 hood.setState(Hood.State.SHOOT);
                 if (Pitch.state != Pitch.State.SHOOT) timer.reset();
-                if (timer.seconds() > 0.5 && !gm1.a) state = State.ACTIVE;
+                if (timer.seconds() > 0.45 && !gm1.a) state = State.ACTIVE;
                 break;
         }
 
     }
-
     public void update() {
         shooterCalculator.update();
         updateState();

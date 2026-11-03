@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Wrappers;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -9,8 +10,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-
+@Config
 public class Hardware {
+    public static double Voltage = 1;
+    public static double x = 13;
     public static Gamepad gm1,gm2,prevgm1,prevgm2;
     public static DcMotorEx mch0, mch1, mch2, mch3;
     public static Limelight3A limelight;

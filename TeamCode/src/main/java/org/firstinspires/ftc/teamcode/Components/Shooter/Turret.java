@@ -14,9 +14,10 @@ public class Turret {
     ServoImplEx servo1,servo2;
     public static double x = 0;
     public double gearRatio = 0.9;
+    public static double a = 0;
     public static double minAngleLimit = 0.047, maxAngleLimit = 0.95;
-    public static double blueX = 1370,blueY = 1380;
-    public static double redX = 1370,redY = -1380;
+    public static double blueX = 1370,blueY = 1400;
+    public static double redX = 1370,redY = -1360;
     public static double offsetUpX = 600, offsetDownX = 0;
     public static double offsetUpY = 0, offsetDownY = 0;
     public double targetAngle = 0,rAngle = 0;
@@ -90,9 +91,14 @@ public class Turret {
     }
 
     private void updateAngle() {
-
-        dx = (state.x + hiveState.offsetX) - Odo.x;
-        dy = (state.y + hiveState.offsetY) - Odo.y;
+        if (Odo.y<-1850) {
+            dx = (state.x + hiveState.offsetX) - Odo.x;
+            dy = (state.y + hiveState.offsetY) - Odo.y + 140;
+        }
+        else {
+            dx = (state.x + hiveState.offsetX) - Odo.x;
+            dy = (state.y + hiveState.offsetY) - Odo.y;
+        }
         targetAngle = Math.atan2(dy, dx);
 
     }
