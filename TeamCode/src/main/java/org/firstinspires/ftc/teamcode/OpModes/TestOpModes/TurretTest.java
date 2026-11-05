@@ -22,6 +22,9 @@ public class TurretTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException{
         Hardware.init(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        Hardware.ssh3.setPwmRange(new PwmControl.PwmRange(500,2500));
+        Hardware.ssh4.setPwmRange(new PwmControl.PwmRange(500,2500));
+
         turret = new Turret();
         odo = new Odo();
         waitForStart();
@@ -36,7 +39,8 @@ public class TurretTest extends LinearOpMode {
             p = Math.min(0.96, p);
             p = Math.max(0.046, p);
 
-            turret.update();
+            Hardware.ssh3.setPosition(x);
+            Hardware.ssh4.setPosition(x);
             odo.update();
 
             telemetry.addData("X",Odo.getX());

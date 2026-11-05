@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.Voltage;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class Flywheel {
     DcMotorEx encoder,shoot1,shoot2;
-    public static double Kp = 0.00054;
+    public static double Kp = 0.000495;
     public static double Ks = 0;
     public static double Kv = 0.000395;
     public static double Ka = 0;
@@ -41,6 +42,10 @@ public class Flywheel {
         encoder = Hardware.mch3;
         shoot1 = Hardware.mch2;
         shoot2 = Hardware.mch3;
+
+        shoot1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        shoot2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
         shoot1.setDirection(DcMotorSimple.Direction.REVERSE);
         shoot2.setDirection(DcMotorSimple.Direction.FORWARD);
     }
@@ -59,7 +64,7 @@ public class Flywheel {
             case IDLE:
                 break;
             case SHOOT:
-                shootPower = ShooterCalculator.getVelocity();
+                shootPower = ShooterCalculator.getVelocity() + 10;
                 break;
         }
     }
@@ -72,7 +77,6 @@ public class Flywheel {
                 + (state.power-currentVelocity) * Kp;
         if (state.power > currentVelocity) rpm += Ka*(prevVelocity-currentVelocity);
         else rpm += Ka * (currentVelocity-prevVelocity);
-        rpm *=Voltage;
         shoot1.setPower(rpm);
         shoot2.setPower(rpm);
 

@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class Transfer {
     DcMotorEx motor;
-    public static double intakePower = 0.72, reversePower = -1, shootPower = 0.5, idlePower = 0,lowPower = 0.325;
+    public static double intakePower = 0.8, reversePower = -1, shootPower = 0.49, idlePower = 0,lowPower = 0.325;
     public static double Ks = 0;
     public enum State{
         ACTIVE(intakePower),

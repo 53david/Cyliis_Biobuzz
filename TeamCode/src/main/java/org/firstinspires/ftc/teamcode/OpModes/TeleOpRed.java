@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.Voltage;
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.gm1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.gm2;
+import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.k;
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.prevgm1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.prevgm2;
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.x;
@@ -24,8 +25,9 @@ import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
-@TeleOp
+@TeleOp(group = "TeleOp")
 public class TeleOpRed extends LinearOpMode {
+    boolean ok = true;
     VoltageSensor voltageSensor;
     Chassis chassis;
     Intake intake;
@@ -45,12 +47,23 @@ public class TeleOpRed extends LinearOpMode {
         intake = new Intake();
         waitForStart();
         while (opModeIsActive()){
-            Voltage = x/ voltageSensor.getVoltage();
+
+            double currentVoltage = voltageSensor.getVoltage();
+            if (currentVoltage<=13) Voltage = x/ currentVoltage * k;
+            else Voltage = 1;
+
             gm1.copy(gamepad1);
             gm2.copy(gamepad2);
 
+            if (gm1.right_stick_x>0.65 && prevgm1.right_stick_x<0.65) Odo.offsetX +=10;
+            if (gm1.right_stick_x<-0.65 && prevgm1.right_stick_x>-0.65) Odo.offsetX -=10;
+            if (gm1.right_stick_y>0.65 && prevgm1.right_stick_y<0.65) Odo.offsetY -=10;
+            if (gm1.right_stick_y<-0.65 && prevgm1.right_stick_y>-0.65) Odo.offsetY +=10;
+
             odo.update();
+
             if  (gm1.psWasPressed())odo.reset();
+
             double heading = -Odo.getHeading() + Math.PI/2;
             double X = gm1.left_stick_x;
             double Y = -gm1.left_stick_y;
@@ -62,8 +75,8 @@ public class TeleOpRed extends LinearOpMode {
             shooter.update();
             if (gamepad1.left_bumper && intake.getState() != Intake.State.SHOOT)
                 intake.setState(Intake.State.REVERSE);
-            else if (gamepad1.right_bumper && intake.getState() != Intake.State.SHOOT)
-                intake.setState(Intake.State.INTAKE);
+            else if (gamepad1.right_bumper && intake.storage.getState()== Storage.State.READY_FOR_TRANSFER) intake.setState(Intake.State.REVERSE);
+            else if (gamepad1.right_bumper && intake.getState() != Intake.State.SHOOT) intake.setState(Intake.State.INTAKE);
             else if (gamepad1.a) {
                 intake.setState(Intake.State.SHOOT);
                 shooter.setState(Shooter.State.SHOOT);
@@ -71,6 +84,12 @@ public class TeleOpRed extends LinearOpMode {
             else if (intake.getState()!= Intake.State.SHOOT){intake.setState(Intake.State.IDLE);shooter.setState(Shooter.State.ACTIVE);}
             if (gm1.circle && gm1.circle != prevgm1.circle && (intake.ramp.getState() == Ramp.State.GOING_DOWN || intake.ramp.getState() == Ramp.State.DOWN))intake.retractRamp();
             else if (gm1.circle && gm1.circle != prevgm1.circle && (intake.ramp.getState() == Ramp.State.GOING_UP || intake.ramp.getState() == Ramp.State.UP))intake.deployRamp();
+
+            if (intake.storage.getState() == Storage.State.READY_FOR_TRANSFER && ok) {
+                ok = false; gamepad1.rumble(400);
+            }
+            else if (intake.storage.getState() == Storage.State.NO_POLLEN)ok = true;
+
 
             intake.update();
             prevgm1.copy(gm1);
@@ -81,6 +100,7 @@ public class TeleOpRed extends LinearOpMode {
             telemetry.addData("Current Velocity",shooter.flyWheel.getVelocity());
             telemetry.addData("Target Velocity",shooter.flyWheel.getTargetVelocity());
             telemetry.addData("Distance", ShooterCalculator.getDistance());
+            telemetry.addData("Storage",intake.storage.getState());
             telemetry.update();
 
         }

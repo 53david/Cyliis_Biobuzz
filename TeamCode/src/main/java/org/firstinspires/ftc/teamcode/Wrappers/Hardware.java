@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 public class Hardware {
     public static double Voltage = 1;
     public static double x = 13;
+    public static double k = 1;
     public static Gamepad gm1,gm2,prevgm1,prevgm2;
     public static DcMotorEx mch0, mch1, mch2, mch3;
     public static Limelight3A limelight;

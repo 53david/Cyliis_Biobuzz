@@ -15,7 +15,7 @@ public class Turret {
     public static double x = 0;
     public double gearRatio = 0.9;
     public static double a = 0;
-    public static double minAngleLimit = 0.047, maxAngleLimit = 0.95;
+    public static double minAngleLimit = 0.05, maxAngleLimit = 0.95;
     public static double blueX = 1370,blueY = 1400;
     public static double redX = 1370,redY = -1360;
     public static double offsetUpX = 600, offsetDownX = 0;
@@ -91,7 +91,7 @@ public class Turret {
     }
 
     private void updateAngle() {
-        if (Odo.y<-1850) {
+        if (Odo.y<-2150) {
             dx = (state.x + hiveState.offsetX) - Odo.x;
             dy = (state.y + hiveState.offsetY) - Odo.y + 140;
         }

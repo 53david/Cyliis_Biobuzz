@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.Math;
 
-import static org.firstinspires.ftc.teamcode.Components.Shooter.Flywheel.idlePower;
-import static org.firstinspires.ftc.teamcode.Components.Shooter.Hood.pos;
-import static org.firstinspires.ftc.teamcode.Components.Shooter.Turret.tx;
-import static org.firstinspires.ftc.teamcode.Components.Shooter.Turret.ty;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.Range;
@@ -22,10 +18,10 @@ public class ShooterCalculator {
                 1380,
                 1380,
                 1400,
+                1400,
                 1420,
                 1440,
                 1460,
-                1480,
                 1480,
                 1480,
                 1480,
@@ -41,7 +37,7 @@ public class ShooterCalculator {
             0.43,
             0.435,
             0.44,
-            0.46,
+            0.462,
             0.47,
             0.47,
             0.48,

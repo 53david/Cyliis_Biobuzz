@@ -53,7 +53,7 @@ public class Intake {
                 break;
             case INTAKE:
                 activeIntake.setState(ActiveIntake.State.INTAKE);
-                if (!Pitch.isOptimal()) transfer.setState(Transfer.State.LOW_POWER);
+                if (!Pitch.isOptimal()) transfer.setState(Transfer.State.IDLE);
                 else transfer.setState(Transfer.State.ACTIVE);
                 pitch.setState(Pitch.State.IDLE);
                 break;
@@ -71,6 +71,12 @@ public class Intake {
                 else activeIntake.setState(ActiveIntake.State.IDLE);
                 break;
         }
+        if (storage.getState()== Storage.State.READY_FOR_TRANSFER && state != State.SHOOT){
+            transfer.setState(Transfer.State.IDLE);
+            if (pitch.getState() != Pitch.State.GOING_SHOOT && pitch.getState()!= Pitch.State.SHOOT)
+                pitch.setState(Pitch.State.GOING_SHOOT);
+        }
+
     }
     public void setState(State state){
         this.state = state;

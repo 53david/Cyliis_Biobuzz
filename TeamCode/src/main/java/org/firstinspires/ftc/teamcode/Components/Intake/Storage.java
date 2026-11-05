@@ -20,21 +20,19 @@ public class Storage {
     public Storage (){
         timer = new ElapsedTime();
         state = State.NO_POLLEN;
-        sensor1 = Hardware.bb1;
+        sensor1 = Hardware.bb4;
         sensor2 = Hardware.bb2;
-        sensor3 = Hardware.bb3;
-        sensor4 = Hardware.bb4;
+        sensor3 = Hardware.bb1;
+        sensor4 = Hardware.bb3;
 
     }
     public void update(){
-        slot1 = sensor1.getState();
-        slot2 = sensor2.getState();
-        slot3 = sensor3.getState();
-        slot4 = sensor4.getState();
-
-        if (slot1 && slot2 && slot3 && slot4) {timer.reset();setState(State.READY_FOR_TRANSFER);}
-        else if (slot1 || slot2 || slot3 || slot4) {timer.reset();setState(State.WAITING_FOR_POLLEN);}
-        else if (timer.seconds()>0.052) setState(State.NO_POLLEN);
+        slot1 = !sensor1.getState();
+        slot2 = !sensor2.getState();
+        slot3 = !sensor3.getState();
+        slot4 = !sensor4.getState();
+        if(slot1 && timer.seconds()>0.145 && slot2) state = State.READY_FOR_TRANSFER;
+        else if (!slot1){timer.reset(); state=State.NO_POLLEN;}
     }
     public void setState(State state){
         this.state = state;
