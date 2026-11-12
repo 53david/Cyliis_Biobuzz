@@ -17,7 +17,6 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Components.Intake.Ramp;
 import org.firstinspires.ftc.teamcode.Components.Intake.Intake;
-import org.firstinspires.ftc.teamcode.Components.Intake.Pitch;
 import org.firstinspires.ftc.teamcode.Components.Intake.Storage;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Shooter;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
@@ -25,7 +24,7 @@ import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
-@TeleOp(group = "TeleOp")
+@TeleOp (group = "TeleOp")
 public class TeleOpBlue extends LinearOpMode {
     boolean ok = true;
     VoltageSensor voltageSensor;
@@ -37,6 +36,7 @@ public class TeleOpBlue extends LinearOpMode {
     public void runOpMode(){
 
         Hardware.init(hardwareMap);
+
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         chassis = new Chassis(Chassis.State.DRIVE);
@@ -70,6 +70,7 @@ public class TeleOpBlue extends LinearOpMode {
             double rx = (gm1.left_trigger - gm1.right_trigger);
             chassis.setTargetVector(x, y, rx);
             chassis.update();
+
             shooter.update();
             if (gamepad1.left_bumper && intake.getState() != Intake.State.SHOOT)
                 intake.setState(Intake.State.REVERSE);
@@ -90,6 +91,8 @@ public class TeleOpBlue extends LinearOpMode {
             intake.update();
             prevgm1.copy(gm1);
             prevgm2.copy(gm2);
+
+
             telemetry.addData("X",Odo.getX());
             telemetry.addData("Y",Odo.getY());
             telemetry.addData("Heading",Odo.getHeading());

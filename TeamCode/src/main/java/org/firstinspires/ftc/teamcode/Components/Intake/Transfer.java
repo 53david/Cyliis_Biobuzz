@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.Intake;
 
+import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.Voltage;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class Transfer {
     DcMotorEx motor;
-    public static double intakePower = 0.8, reversePower = -1, shootPower = 0.49, idlePower = 0,lowPower = 0.325;
+    public static double intakePower = 0.8, reversePower = -1, shootPower = 0.46, idlePower = 0,lowPower = 0.325;
     public static double Ks = 0;
     public enum State{
         ACTIVE(intakePower),
@@ -30,7 +32,7 @@ public class Transfer {
     public Transfer(){
         state = State.IDLE;
         this.motor = Hardware.mch1;
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     public void update(){
@@ -56,7 +58,7 @@ public class Transfer {
         State.LOW_POWER.power = lowPower;
     }
     private void updateHardware(){
-        motor.setPower(state.power + Ks);
+        motor.setPower(state.power * Voltage + Ks);
     }
     public void setState(State state){
         this.state = state;

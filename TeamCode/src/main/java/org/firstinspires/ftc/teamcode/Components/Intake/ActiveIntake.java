@@ -29,7 +29,7 @@ public class ActiveIntake {
     public ActiveIntake(){
         state = State.IDLE;
         this.motor = Hardware.mch0;
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     public void update(){

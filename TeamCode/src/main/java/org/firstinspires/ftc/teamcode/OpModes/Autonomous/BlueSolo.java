@@ -18,8 +18,6 @@ public class BlueSolo extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()){
 
-            blueAuto.update();
-
             telemetry.addData("Current Node", blueAuto.currentNode.getName());
             telemetry.addData("X", Odo.getX());
             telemetry.addData("Y", Odo.getY());

@@ -31,8 +31,8 @@ public class Storage {
         slot2 = !sensor2.getState();
         slot3 = !sensor3.getState();
         slot4 = !sensor4.getState();
-        if(slot1 && timer.seconds()>0.145 && slot2) state = State.READY_FOR_TRANSFER;
-        else if (!slot1){timer.reset(); state=State.NO_POLLEN;}
+        if(slot1 && slot2 && timer.seconds()>0.2) state = State.READY_FOR_TRANSFER;
+        else if (!slot1 || !slot2){timer.reset(); state=State.NO_POLLEN;}
     }
     public void setState(State state){
         this.state = state;

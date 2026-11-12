@@ -63,8 +63,8 @@ public class Intake {
                 pitch.setState(Pitch.State.IDLE);
                 break;
             case SHOOT:
-                if (!Pitch.isOptimal()) {transfer.setState(Transfer.State.IDLE); timer.reset();}
-                else if (Pitch.isOptimal()) {transfer.setState(Transfer.State.SHOOT);}
+                if (pitch.getState() != Pitch.State.SHOOT) {transfer.setState(Transfer.State.IDLE); timer.reset();}
+                else if (pitch.getState() == Pitch.State.SHOOT) {transfer.setState(Transfer.State.SHOOT);}
                 if (timer.seconds()>0.45 && !gm1.a) state = state.nextState;
                 if (pitch.getState() != Pitch.State.GOING_SHOOT && pitch.getState()!= Pitch.State.SHOOT) pitch.setState(Pitch.State.GOING_SHOOT);
                 if (gm1.right_bumper)activeIntake.setState(ActiveIntake.State.SHOOT);

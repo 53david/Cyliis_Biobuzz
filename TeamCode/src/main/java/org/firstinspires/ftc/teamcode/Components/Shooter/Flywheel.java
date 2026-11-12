@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.Components.Shooter;
 
 
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.Voltage;
+import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.mch3;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class Flywheel {
     DcMotorEx encoder,shoot1,shoot2;
-    public static double Kp = 0.000495;
+    public static double Kp = 0.0007;
     public static double Ks = 0;
     public static double Kv = 0.000395;
     public static double Ka = 0;
@@ -64,7 +64,7 @@ public class Flywheel {
             case IDLE:
                 break;
             case SHOOT:
-                shootPower = ShooterCalculator.getVelocity() + 10;
+                shootPower = ShooterCalculator.getVelocity();
                 break;
         }
     }
@@ -77,8 +77,8 @@ public class Flywheel {
                 + (state.power-currentVelocity) * Kp;
         if (state.power > currentVelocity) rpm += Ka*(prevVelocity-currentVelocity);
         else rpm += Ka * (currentVelocity-prevVelocity);
-        shoot1.setPower(rpm);
-        shoot2.setPower(rpm);
+        shoot1.setPower(rpm * Voltage);
+        shoot2.setPower(rpm * Voltage);
 
     }
     public boolean isReady(){
@@ -89,6 +89,9 @@ public class Flywheel {
     }
     public double getTargetVelocity(){
         return state.power;
+    }
+    public static double getAngularVelocity(){
+        return (mch3.getVelocity()/28) * (Math.PI*2) * 2/3;
     }
     public void setState(State state){
         this.state = state;

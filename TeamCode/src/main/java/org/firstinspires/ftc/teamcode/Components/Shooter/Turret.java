@@ -17,8 +17,8 @@ public class Turret {
     public static double a = 0;
     public static double minAngleLimit = 0.05, maxAngleLimit = 0.95;
     public static double blueX = 1370,blueY = 1400;
-    public static double redX = 1370,redY = -1360;
-    public static double offsetUpX = 600, offsetDownX = 0;
+    public static double redX = 1195,redY = -1320;
+    public static double offsetUpX = 860, offsetDownX = 0;
     public static double offsetUpY = 0, offsetDownY = 0;
     public double targetAngle = 0,rAngle = 0;
     public double targetPosition = 0.5;
@@ -79,7 +79,7 @@ public class Turret {
         rAngle -= Odo.heading;
         rAngle = normalizeRadians(rAngle);
         rAngle /= maxAngle;
-        rAngle += minAngleLimit;
+        rAngle += 0.046;
         targetPosition = rAngle;
 
         targetPosition = Math.max(minAngleLimit, targetPosition);
@@ -91,14 +91,8 @@ public class Turret {
     }
 
     private void updateAngle() {
-        if (Odo.y<-2150) {
-            dx = (state.x + hiveState.offsetX) - Odo.x;
-            dy = (state.y + hiveState.offsetY) - Odo.y + 140;
-        }
-        else {
-            dx = (state.x + hiveState.offsetX) - Odo.x;
-            dy = (state.y + hiveState.offsetY) - Odo.y;
-        }
+        dx = (state.x + hiveState.offsetX) - ShooterCalculator.x;
+        dy = (state.y + hiveState.offsetY) - ShooterCalculator.y;
         targetAngle = Math.atan2(dy, dx);
 
     }

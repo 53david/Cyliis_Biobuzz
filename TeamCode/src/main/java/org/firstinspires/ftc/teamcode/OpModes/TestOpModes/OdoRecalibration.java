@@ -13,7 +13,6 @@ public class OdoRecalibration extends LinearOpMode {
         Hardware.init(hardwareMap);
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
-            Hardware.pp.resetPosAndIMU();
             Hardware.pp.recalibrateIMU();
             requestOpModeStop();
         }

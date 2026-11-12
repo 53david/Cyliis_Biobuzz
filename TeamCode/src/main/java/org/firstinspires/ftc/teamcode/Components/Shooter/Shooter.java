@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Components.Shooter;
 
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.gm1;
 
-import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Components.Intake.Pitch;
