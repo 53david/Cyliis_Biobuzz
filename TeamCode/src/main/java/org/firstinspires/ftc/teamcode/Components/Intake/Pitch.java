@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class Pitch {
     Servo servo;
-    public static double idlePos = 0.98, transferPos = 0.41,acc = 20, maxVel = 20,dec = 20,currentPos;
+    public static double idlePos = 0.84, transferPos = 0.32,acc = 20, maxVel = 20,dec = 20,currentPos;
     BetterMotionProfile profile;
     public enum State{
         IDLE(idlePos),

@@ -61,6 +61,8 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
     private float hOrientation = 0;
     private float xVelocity    = 0;
     private float yVelocity    = 0;
+    private float xAcceleration = 0;
+    private float yAcceleration = 0;
     private float hVelocity    = 0;
 
     private static final float goBILDA_SWINGARM_POD = 13.26291192f; //ticks-per-mm for the goBILDA Swingarm Pod
@@ -93,6 +95,14 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
     @Override
     public String getDeviceName() {
         return "goBILDA® Pinpoint Odometry Computer";
+    }
+
+    public float getxAcceleration() {
+        return xAcceleration;
+    }
+
+    public float getyAcceleration() {
+        return yAcceleration;
     }
 
 

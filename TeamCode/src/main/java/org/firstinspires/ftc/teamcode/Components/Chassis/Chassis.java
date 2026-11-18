@@ -23,7 +23,7 @@ public class Chassis{
     public boolean usePredictiveBreaking = true;
     CRServo frontLeft,frontRight,backLeft,backRight;
     public static boolean stop = false;
-    public  double targetX , targetY ,x=0 ,y=0,multiplier = 1;
+    public  double targetX , targetY ,x=0 ,y=0,multiplier = 1.1;
     public static double targetHeading;
     public static double error;
     double rotation,heading;
@@ -40,9 +40,9 @@ public class Chassis{
 
     public Chassis(State initialState)
     {
-        frontLeft= Hardware.sch2;
-        frontRight= Hardware.sch0;
-        backLeft=Hardware.sch3;
+        frontLeft= Hardware.sch3;
+        frontRight= Hardware.sch2;
+        backLeft=Hardware.sch0;
         backRight=Hardware.sch1;
 
         state=initialState;

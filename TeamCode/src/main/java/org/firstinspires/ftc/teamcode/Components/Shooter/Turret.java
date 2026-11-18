@@ -13,9 +13,8 @@ import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 public class Turret {
     ServoImplEx servo1,servo2;
     public static double x = 0;
-    public double gearRatio = 0.9;
     public static double a = 0;
-    public static double minAngleLimit = 0.05, maxAngleLimit = 0.95;
+    public static double minAngleLimit = 0.057, maxAngleLimit = 0.955;
     public static double blueX = 1370,blueY = 1400;
     public static double redX = 1195,redY = -1320;
     public static double offsetUpX = 860, offsetDownX = 0;
@@ -54,8 +53,8 @@ public class Turret {
         servo1 = Hardware.ssh3;
         servo2 = Hardware.ssh4;
 
-        servo1.setDirection(Servo.Direction.FORWARD);
-        servo2.setDirection(Servo.Direction.FORWARD);
+        servo1.setDirection(Servo.Direction.REVERSE);
+        servo2.setDirection(Servo.Direction.REVERSE);
 
         servo1.setPwmRange(new PwmControl.PwmRange(500,2500));
         servo2.setPwmRange(new PwmControl.PwmRange(500,2500));
@@ -79,7 +78,7 @@ public class Turret {
         rAngle -= Odo.heading;
         rAngle = normalizeRadians(rAngle);
         rAngle /= maxAngle;
-        rAngle += 0.046;
+        rAngle += minAngleLimit;
         targetPosition = rAngle;
 
         targetPosition = Math.max(minAngleLimit, targetPosition);

@@ -2,8 +2,9 @@ package org.firstinspires.ftc.teamcode.Components.Intake;
 
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.gm1;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+@Config
 public class Intake {
     ElapsedTime timer;
     public ActiveIntake activeIntake;
@@ -40,7 +41,6 @@ public class Intake {
         transfer.update();
         pitch.update();
         storage.update();
-        ramp.update();
 
         if (state != State.SHOOT) timer.reset();
     }

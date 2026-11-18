@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components.Shooter;
 
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
@@ -12,10 +13,10 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class Hood {
     ServoImplEx servo;
-    public static double minPos = 0.35;
-    public static double k = -0.0000085,offset = 0;
+    public static double minPos = 0.05;
+    public static double k = -0.00002,offset = 0;
     public static double x = 0;
-    public static double idlePos = 0.35,shootPos = 0, pos = 0.42,maxPos = 0.72;
+    public static double idlePos = 0.12,shootPos = 0, pos = 0.42,maxPos = 0.35;
     public enum State{
         PAUSE(pos),
         IDLE(idlePos),
@@ -27,7 +28,7 @@ public class Hood {
     }
     public State state = State.IDLE;
     public Hood(){
-        servo = Hardware.ssh1;
+        servo = Hardware.ssh5;
         servo.setDirection(Servo.Direction.FORWARD);
     }
     public void update(){
@@ -36,16 +37,18 @@ public class Hood {
         updateHardware();
     }
     private void updateHardware(){
-        servo.setPosition(state.position + offset);
+        servo.setPosition(state.position);
     }
     private void updateState(){
         switch (state){
             case PAUSE:
                 break;
             case IDLE:
-                idlePos = Range.clip(ShooterCalculator.getHoodAngle() + minPos,minPos,0.575);
+                idlePos = Range.clip(ShooterCalculator.getHoodAngle() + minPos
+                        ,minPos,maxPos);
             case SHOOT:
-                shootPos = Range.clip(ShooterCalculator.getHoodAngle() + minPos - k*(Flywheel.currentVelocity- Flywheel.targetVelocity),minPos,0.575);
+                shootPos = Range.clip(ShooterCalculator.getHoodAngle() + minPos
+                        - k*(Flywheel.currentVelocity- Flywheel.targetVelocity),minPos,maxPos);
                 break;
         }
     }

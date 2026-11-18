@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
 @Config
 @TeleOp
 public class HubTest extends LinearOpMode {
@@ -51,6 +54,8 @@ public class HubTest extends LinearOpMode {
 
         while(opModeIsActive())
         {
+            if ((port == PORT._4 || port == PORT._5) && hardware == HARDWARE.MOTOR) port = PORT._3;
+
             String string = hardware.name+port.number;
 
             switch (hardware)
@@ -63,12 +68,13 @@ public class HubTest extends LinearOpMode {
                     servo=hardwareMap.get(ServoImplEx.class, string);
                     servo.setPwmRange(new PwmControl.PwmRange(500,2500));
                     servo.setPosition(position);
+                    telemetry.addData("pos",servo.getPosition());
                     break;
                 case MOTOR:
                     motor=hardwareMap.get(DcMotorEx.class, string);
-                    if (port.number == "2") motor.setPower(-power);
-                    else motor.setPower(power);
-                    telemetry.addData("a" , motor.getVelocity());
+                    motor.setPower(power);
+                    telemetry.addData("vel" , motor.getVelocity());
+                    telemetry.addData("current" , motor.getCurrent(CurrentUnit.AMPS));
                     break;
             }
 

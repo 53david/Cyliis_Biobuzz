@@ -13,7 +13,9 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Components.Intake.Ramp;
 import org.firstinspires.ftc.teamcode.Components.Intake.Intake;
@@ -27,6 +29,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
 @TeleOp(group = "TeleOp")
 public class TeleOpRed extends LinearOpMode {
+    ElapsedTime timer;
     boolean ok = true;
     VoltageSensor voltageSensor;
     Chassis chassis;
@@ -37,6 +40,7 @@ public class TeleOpRed extends LinearOpMode {
     public void runOpMode(){
 
         Hardware.init(hardwareMap);
+        timer = new ElapsedTime();
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         chassis = new Chassis(Chassis.State.DRIVE);
@@ -49,8 +53,7 @@ public class TeleOpRed extends LinearOpMode {
         while (opModeIsActive()){
 
             double currentVoltage = voltageSensor.getVoltage();
-            if (currentVoltage>13) Voltage = 1;
-            else if (currentVoltage<13)Voltage = x/ currentVoltage * k;
+            Voltage = x/ (currentVoltage * k);
 
             gm1.copy(gamepad1);
             gm2.copy(gamepad2);
@@ -94,18 +97,20 @@ public class TeleOpRed extends LinearOpMode {
             intake.update();
             prevgm1.copy(gm1);
             prevgm2.copy(gm2);
+            telemetry.addData("FPS",1/timer.seconds());
             telemetry.addData("X",Odo.getX());
             telemetry.addData("Y",Odo.getY());
             telemetry.addData("Heading",Odo.getHeading());
-            telemetry.addData("Voltage",Voltage);
-            telemetry.addData("Current Voltage",voltageSensor.getVoltage());
             telemetry.addData("Current Velocity",shooter.flyWheel.getVelocity());
             telemetry.addData("Target Velocity",shooter.flyWheel.getTargetVelocity());
-            telemetry.addData("Distance", ShooterCalculator.getDistance());
             telemetry.addData("Storage",intake.storage.getState());
-            telemetry.addData("Angular Velocity", Flywheel.getAngularVelocity());
-            telemetry.addData("t",ShooterCalculator.getTime());
+            telemetry.addData("Shoot1Current",shooter.flyWheel.shoot1.getCurrent(CurrentUnit.AMPS));
+            telemetry.addData("Shoot2Current",shooter.flyWheel.shoot2.getCurrent(CurrentUnit.AMPS));
+            telemetry.addData("TransferCurrent",intake.transfer.motor.getCurrent(CurrentUnit.AMPS));
+            telemetry.addData("IntakeCurrent",intake.activeIntake.motor.getCurrent(CurrentUnit.AMPS));
             telemetry.update();
+            timer.reset();
+
 
         }
     }

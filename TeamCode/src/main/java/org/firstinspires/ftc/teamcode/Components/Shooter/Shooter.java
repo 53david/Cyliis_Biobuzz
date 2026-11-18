@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.Components.Intake.Pitch;
 import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
 
 public class Shooter {
+    double tf;
     ShooterCalculator shooterCalculator;
     public Flywheel flyWheel;
     ElapsedTime timer;

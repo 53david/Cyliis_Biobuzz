@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Math.BetterMotionProfile;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class Ramp {
-    public static double intakePos= 0.9, idlePos = 0.525, acc =18,dec = 18,maxVel = 20;
+    public static double intakePos= 0.86, idlePos = 0.525, acc =18,dec = 18,maxVel = 20;
     BetterMotionProfile profile;
     Servo servo;
 
